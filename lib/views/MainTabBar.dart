@@ -20,6 +20,13 @@ class MainTabBarState extends State<MainTabBar> {
     const SettingsPage(),
   ];
 
+  // List of page headers
+  final List<Widget> _pageHeaders = [
+    HomePageHeader(),
+    const Text("Insights"),
+    const Text("Settings"),
+  ];
+
   // Function to handle tab switching
   void _onItemTapped(int index) {
     setState(() {
@@ -31,7 +38,7 @@ class MainTabBarState extends State<MainTabBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bottom TabBar with Rounded Corners'),
+        title: _pageHeaders[_selectedIndex],
       ),
       body: _pages[_selectedIndex], // Displays the selected page
       bottomNavigationBar: BottomNavigationBar(
@@ -39,15 +46,15 @@ class MainTabBarState extends State<MainTabBar> {
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(
-            icon:_buildTabIconFromImage("lib/icons/house.png", 0),
+            icon:_buildTabIconFromImages("lib/icons/house.png", "lib/icons/houseSelected.png", 0),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: _buildTabIcon(Icons.favorite, 1),
-            label: 'Favorites',
+            icon: _buildTabIconFromImages("lib/icons/chart.png", "lib/icons/chartSelected.png", 1),
+            label: 'Insights',
           ),
           BottomNavigationBarItem(
-            icon: _buildTabIcon(Icons.settings, 2),
+            icon: _buildTabIconFromImages("lib/icons/settings.png", "lib/icons/settingsSelected.png", 2),
             label: 'Settings',
           ),
         ],
@@ -72,22 +79,56 @@ class MainTabBarState extends State<MainTabBar> {
     );
   }
 
-  // Function to build the rounded tab icon with selection effect
-  Widget _buildTabIconFromImage(String imagePath, int index) {
+  Widget _buildTabIconFromImages(String unselectedImagePath, String selectedImagePath, int index) {
     bool isSelected = _selectedIndex == index;
 
     return Container(
       padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.blue : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-      ),
       child: Image.asset(
-        imagePath,
-        height: 20,
-        width: 20,
-        color: isSelected ? Colors.white : null,
+        isSelected ? selectedImagePath : unselectedImagePath,
+        color: isSelected ? null : Colors.grey,
+        height: 25,
+        width: 25,
       ),
     );
   }
+}
+
+class HomePageHeader extends StatelessWidget {
+  const HomePageHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+     children: [
+       Column(
+         children: [
+           Image.asset(
+             "lib/icons/user.png",
+             height: 50,
+             width: 50,
+           ),
+         ]
+       ),
+       const SizedBox(
+         width: 5,
+       ),
+       const Column(
+         children: [
+           Text("Hello",
+           style: TextStyle(
+             fontSize: 14
+           )),
+           Text("User",
+           style: TextStyle(
+             fontWeight: FontWeight.bold,
+             fontSize: 16
+           ),)
+         ],
+       ),
+       const Column()
+     ],
+    );
+  }
+
 }
