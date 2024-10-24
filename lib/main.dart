@@ -14,9 +14,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      scrollBehavior: CustomScrollBehavior(),
       title: "Income Tally",
-      theme: ThemeData.light(),
+      scrollBehavior: CustomScrollBehavior(),
+      theme: ThemeData.light(useMaterial3: true),
       home: const MainTabBar(),
     );
   }

@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 
+import '../models/Helpers.dart';
+
 class RoundedContainer extends StatelessWidget {
   final Widget? child;
   final double? width;
   final double? height;
   final double cornerRadius;
+  final double borderThickness;
+  final LinearGradient? gradient;
 
   const RoundedContainer({
     super.key,
     this.child,
     this.width,
     this.height,
-    this.cornerRadius = 40
+    this.cornerRadius = 40,
+    this.borderThickness = 0.1,
+    this.gradient
   });
-
-  // Function to change the lightness of a color
-  Color changeLightness(Color color, double amount) {
-    final hsl = HSLColor.fromColor(color);
-    final newLightness = (hsl.lightness + amount).clamp(0.0, 1.0);
-    final newHsl = hsl.withLightness(newLightness);
-    return newHsl.toColor();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +30,11 @@ class RoundedContainer extends StatelessWidget {
 
     // Check if the current theme is dark
     if (Theme.of(context).brightness == Brightness.dark) {
-      darkerColor = changeLightness(primaryColor, 0.005);
-      lighterColor = changeLightness(primaryColor, 0.010);
+      darkerColor = AppColors.instance.changeLightness(primaryColor, 0.005);
+      lighterColor = AppColors.instance.changeLightness(primaryColor, 0.010);
     } else {
-      darkerColor = changeLightness(primaryColor, 0.000);
-      lighterColor = changeLightness(primaryColor, -0.015);
+      darkerColor = AppColors.instance.changeLightness(primaryColor, 0.000);
+      lighterColor = AppColors.instance.changeLightness(primaryColor, -0.015);
     }
 
     return Center(
@@ -46,8 +44,13 @@ class RoundedContainer extends StatelessWidget {
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: primaryColor,
+          gradient: gradient ?? LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [darkerColor, lighterColor],
+          ),
           borderRadius: BorderRadius.circular(cornerRadius),
-          border: Border.all(width: 0.1, color: primaryColor),
+          border: Border.all(width: borderThickness, color: primaryColor),
           boxShadow: [
             BoxShadow(
               color: Colors.deepPurple.withOpacity(0.2),
@@ -57,18 +60,7 @@ class RoundedContainer extends StatelessWidget {
             ),
           ],
         ),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [darkerColor, lighterColor],
-            ),
-            borderRadius: BorderRadius.circular(cornerRadius),
-          ),
-          child: child,
-        ),
+        child: child
       ),
     );
   }
