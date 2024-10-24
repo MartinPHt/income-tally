@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:income_tally/views/FavouritesPage.dart';
+import 'package:income_tally/views/InsightsPage.dart';
 import 'package:income_tally/views/HomePage.dart';
 import 'package:income_tally/views/SettingsPage.dart';
 
@@ -16,13 +16,13 @@ class MainTabBarState extends State<MainTabBar> {
   // List of pages for each tab
   final List<Widget> _pages = [
     const HomePage(),
-    FavoritesPage(),
+    const InsidesPage(),
     const SettingsPage(),
   ];
 
   // List of page headers
   final List<Widget> _pageHeaders = [
-    HomePageHeader(),
+    const HomePageHeader(),
     const Text("Insights"),
     const Text("Settings"),
   ];
