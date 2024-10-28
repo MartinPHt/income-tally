@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:income_tally/views/RoundedContainer.dart';
+import 'package:income_tally/widgets/rounded_container.dart';
 
-import '../models/Helpers.dart';
+import '../services/helpers.dart';
+import '../widgets/line_chart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,7 +59,7 @@ class HomePageState extends State<HomePage> {
                     left: 25, top: 10, right: 25, bottom: 10),
                 constraints: const BoxConstraints(minWidth: 300),
                 child: RoundedContainer(
-
+                    child: MonthlyExpenseBarChart()
                 )),
           ),
           Expanded(

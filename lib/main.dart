@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
-import "package:income_tally/views/MainTabBar.dart";
+import "package:income_tally/views/main_view.dart";
 
-import "models/Helpers.dart";
+import "services/helpers.dart";
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: "Income Tally",
       scrollBehavior: CustomScrollBehavior(),
       theme: ThemeData.light(useMaterial3: true),
-      home: const MainTabBar(),
+      home: const MainView(),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/Helpers.dart';
+import '../services/helpers.dart';
 
 class RoundedContainer extends StatelessWidget {
   final Widget? child;
@@ -9,6 +9,8 @@ class RoundedContainer extends StatelessWidget {
   final double cornerRadius;
   final double borderThickness;
   final LinearGradient? gradient;
+  final EdgeInsets? margin;
+  final EdgeInsets? padding;
 
   const RoundedContainer({
     super.key,
@@ -17,6 +19,8 @@ class RoundedContainer extends StatelessWidget {
     this.height,
     this.cornerRadius = 40,
     this.borderThickness = 0.1,
+    this.margin,
+    this.padding,
     this.gradient
   });
 
@@ -41,7 +45,8 @@ class RoundedContainer extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        padding: const EdgeInsets.all(4),
+        margin: margin,
+        padding: padding,
         decoration: BoxDecoration(
           color: primaryColor,
           gradient: gradient ?? LinearGradient(
