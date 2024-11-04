@@ -63,15 +63,6 @@ class MainViewState extends State<MainView> {
                   opacity: animation,
                   child: child,
                 ),
-                // Positioned.fill(
-                //   child: FadeTransition(
-                //     opacity:
-                //         Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-                //     child: Container(
-                //       color: Colors.white,
-                //     ),
-                //   ),
-                // )
               ]);
             },
             child: Column(
@@ -103,7 +94,7 @@ class MainViewState extends State<MainView> {
             BottomNavigationBarItem(
               icon: _buildTabIconFromImages(
                   "lib/icons/settings.png", "lib/icons/settingsSelected.png", 2),
-              label: 'Settings',
+              label: 'Expences',
             ),
           ],
         ),

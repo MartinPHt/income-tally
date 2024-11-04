@@ -11,6 +11,7 @@ class RoundedContainer extends StatelessWidget {
   final LinearGradient? gradient;
   final EdgeInsets? margin;
   final EdgeInsets? padding;
+  final BoxConstraints? constraints;
 
   const RoundedContainer({
     super.key,
@@ -21,7 +22,8 @@ class RoundedContainer extends StatelessWidget {
     this.borderThickness = 0.1,
     this.margin,
     this.padding,
-    this.gradient
+    this.gradient,
+    this.constraints
   });
 
   @override
@@ -47,6 +49,7 @@ class RoundedContainer extends StatelessWidget {
         height: height,
         margin: margin,
         padding: padding,
+        constraints: constraints,
         decoration: BoxDecoration(
           color: primaryColor,
           gradient: gradient ?? LinearGradient(

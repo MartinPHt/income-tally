@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:income_tally/views/add_expense_view.dart";
 import "package:income_tally/views/main_view.dart";
 
 import "services/helpers.dart";
@@ -17,6 +18,9 @@ class MyApp extends StatelessWidget {
       title: "Income Tally",
       scrollBehavior: CustomScrollBehavior(),
       theme: ThemeData.light(useMaterial3: true),
+      routes: {
+        "/add_expense": (context) => const AddExpenseView(),
+      },
       home: const MainView(),
     );
   }
