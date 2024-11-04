@@ -38,7 +38,6 @@ class AddExpenseViewState extends State<AddExpenseView> {
 
   @override
   Widget build(BuildContext context) {
-
     double startHeight = MediaQuery.of(context).size.height / 6;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -49,37 +48,40 @@ class AddExpenseViewState extends State<AddExpenseView> {
     double mainLeftMargin;
     double decorRight;
     double decorBottom;
+    bool isCancelButtonVisible;
+
     if (screenWidth <= 600) {
       decorWidth = screenWidth * 0.55;
       decorHeight = screenHeight * 0.30;
       widgetsMaxWidth = screenWidth * 0.60;
       mainLeftMargin = 50;
       decorRight = 40;
-      decorBottom = 40;
-    }
-    else if (screenWidth <= 1280) {
+      decorBottom = 60;
+      isCancelButtonVisible = false;
+    } else if (screenWidth <= 1280) {
       decorWidth = screenWidth * 0.50;
       decorHeight = screenHeight * 0.60;
       widgetsMaxWidth = screenWidth * 0.35;
       mainLeftMargin = 120;
-      decorRight = 120;
-      decorBottom = 120;
-    }
-    else if (screenWidth <= 1680) {
+      decorRight = 80;
+      decorBottom = 100;
+      isCancelButtonVisible = false;
+    } else if (screenWidth <= 1680) {
       decorWidth = screenWidth * 0.50;
       decorHeight = screenHeight * 0.60;
       widgetsMaxWidth = screenWidth * 0.30;
       mainLeftMargin = 200;
       decorRight = 200;
       decorBottom = 120;
-    }
-    else {
+      isCancelButtonVisible = true;
+    } else {
       decorWidth = screenWidth * 0.50;
       decorHeight = screenHeight * 0.60;
       widgetsMaxWidth = screenWidth * 0.20;
       mainLeftMargin = 450;
       decorRight = 450;
       decorBottom = 120;
+      isCancelButtonVisible = true;
     }
 
     return SafeArea(
@@ -145,8 +147,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
                 Container(
                   margin: const EdgeInsets.only(top: 20, bottom: 10),
                   child: const Text("Title",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 Container(
                     constraints: BoxConstraints(maxWidth: widgetsMaxWidth),
@@ -158,8 +160,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
                 Container(
                   margin: const EdgeInsets.only(top: 20, bottom: 10),
                   child: const Text("Total",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 Container(
                     constraints: BoxConstraints(maxWidth: widgetsMaxWidth),
@@ -177,8 +179,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
                 Container(
                   margin: const EdgeInsets.only(top: 20, bottom: 10),
                   child: const Text("Category",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 10, bottom: 10),
@@ -214,11 +216,42 @@ class AddExpenseViewState extends State<AddExpenseView> {
                     ],
                   ),
                 ),
-                Container(
-                  height: 40,
-                  width: MediaQuery.of(context).size.width,
-                  constraints: const BoxConstraints(maxWidth: 200),
-                  child: FilledButton(onPressed: () {}, child: const Text('Add')),
+                Row(
+                  children: [
+                    Container(
+                      height: 45,
+                      margin: const EdgeInsets.only(left: 5, right: 15),
+                      width: isCancelButtonVisible
+                          ? (widgetsMaxWidth - 40) * 0.50
+                          : (widgetsMaxWidth - 40) * 0.65,
+                      child: FilledButton(
+                          onPressed: () {}, child: const Text('Add')),
+                    ),
+                    Visibility(
+                      visible: isCancelButtonVisible,
+                      child: Container(
+                        height: 45,
+                        margin: const EdgeInsets.only(left: 15, right: 5),
+                        width: (widgetsMaxWidth - 40) * 0.50,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                  width: 1.5,
+                                  color: Theme.of(context).primaryColor)),
+                          child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Theme.of(context).canvasColor,
+                                foregroundColor: Theme.of(context).primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel')),
+                        ),
+                      ),
+                    )
+                  ],
                 )
               ],
             ),
