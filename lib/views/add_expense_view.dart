@@ -32,14 +32,69 @@ class AddExpenseViewState extends State<AddExpenseView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     double startHeight = MediaQuery.of(context).size.height / 6;
-    double widgetsMaxWidth = 250;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    double decorWidth;
+    double decorHeight;
+    double widgetsMaxWidth;
+    double mainLeftMargin;
+    double decorRight;
+    double decorBottom;
+    if (screenWidth <= 600) {
+      decorWidth = screenWidth * 0.55;
+      decorHeight = screenHeight * 0.30;
+      widgetsMaxWidth = screenWidth * 0.60;
+      mainLeftMargin = 50;
+      decorRight = 40;
+      decorBottom = 40;
+    }
+    else if (screenWidth <= 1280) {
+      decorWidth = screenWidth * 0.50;
+      decorHeight = screenHeight * 0.60;
+      widgetsMaxWidth = screenWidth * 0.35;
+      mainLeftMargin = 120;
+      decorRight = 120;
+      decorBottom = 120;
+    }
+    else if (screenWidth <= 1680) {
+      decorWidth = screenWidth * 0.50;
+      decorHeight = screenHeight * 0.60;
+      widgetsMaxWidth = screenWidth * 0.30;
+      mainLeftMargin = 200;
+      decorRight = 200;
+      decorBottom = 120;
+    }
+    else {
+      decorWidth = screenWidth * 0.50;
+      decorHeight = screenHeight * 0.60;
+      widgetsMaxWidth = screenWidth * 0.20;
+      mainLeftMargin = 450;
+      decorRight = 450;
+      decorBottom = 120;
+    }
 
     return SafeArea(
         child: Scaffold(
       body: Stack(
         children: [
+          Positioned(
+              right: decorRight,
+              bottom: decorBottom,
+              child: Image.asset(
+                'lib/icons/decor1.png',
+                width: decorWidth,
+                height: decorHeight,
+                alignment: Alignment.bottomRight,
+              )),
           SizedBox(
             height: 80,
             child: Row(
@@ -71,107 +126,103 @@ class AddExpenseViewState extends State<AddExpenseView> {
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(left: 30, right: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: startHeight,
-                  ),
-                  const Text("New expense",
-                      style:
-                          TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                  const Text("Please fill out all fields",
+          Container(
+            margin: EdgeInsets.only(left: mainLeftMargin, right: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: startHeight,
+                ),
+                const Text("New expense",
+                    style:
+                        TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                const Text("Please fill out all fields",
+                    style: TextStyle(
+                      fontSize: 16,
+                    )),
+                Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 10),
+                  child: const Text("Title",
                       style: TextStyle(
-                        fontSize: 16,
-                      )),
-                  Container(
-                    margin: const EdgeInsets.only(top: 20, bottom: 10),
-                    child: const Text("Title",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
-                  Container(
-                      constraints: BoxConstraints(maxWidth: widgetsMaxWidth),
-                      child: TextField(
-                        controller: titleTextController,
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(), hintText: "Title"),
-                      )),
-                  Container(
-                    margin: const EdgeInsets.only(top: 20, bottom: 10),
-                    child: const Text("Total",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
-                  Container(
-                      constraints: BoxConstraints(maxWidth: widgetsMaxWidth),
-                      child: TextField(
-                        controller: totalTextController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            signed: true, decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r"^\d+(\.(\d+)?)?$")),
-                        ],
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(), hintText: 'Total'),
-                      )),
-                  Container(
-                    margin: const EdgeInsets.only(top: 20, bottom: 10),
-                    child: const Text("Category",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: 10),
+                          fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+                Container(
                     constraints: BoxConstraints(maxWidth: widgetsMaxWidth),
-                    child: DropdownMenu<String>(
-                      width: MediaQuery.of(context).size.width,
-                      initialSelection: selectedExpenseType.isNotEmpty
-                          ? selectedExpenseType
-                          : expenseTypes.first,
-                      onSelected: (String? value) {},
-                      dropdownMenuEntries: expenseTypes.map((value) {
-                        return DropdownMenuEntry(value: value, label: value);
-                      }).toList(),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(
-                        left: 30, top: 10, right: 30, bottom: 10),
-                    child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(left: 10, right: 10),
-                          child: const Text("Recurring", style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                        ),
-                        Checkbox(
-                            value: isRecurring,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isRecurring = value ?? isRecurring;
-                              });
-                            }),
+                    child: TextField(
+                      controller: titleTextController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(), hintText: "Title"),
+                    )),
+                Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 10),
+                  child: const Text("Total",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+                Container(
+                    constraints: BoxConstraints(maxWidth: widgetsMaxWidth),
+                    child: TextField(
+                      controller: totalTextController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                          signed: true, decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r"^\d+(\.(\d+)?)?$")),
                       ],
-                    ),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(), hintText: 'Total'),
+                    )),
+                Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 10),
+                  child: const Text("Category",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: DropdownMenu<String>(
+                    width: widgetsMaxWidth,
+                    initialSelection: selectedExpenseType.isNotEmpty
+                        ? selectedExpenseType
+                        : expenseTypes.first,
+                    onSelected: (String? value) {},
+                    dropdownMenuEntries: expenseTypes.map((value) {
+                      return DropdownMenuEntry(value: value, label: value);
+                    }).toList(),
                   ),
-                  Container(
-                    height: 40,
-                    child: FilledButton(onPressed: () {}, child: Container()),
-                    constraints: const BoxConstraints(
-                      maxWidth: 200
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 15, bottom: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        child: const Text("Recurring",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                      Checkbox(
+                          value: isRecurring,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isRecurring = value ?? isRecurring;
+                            });
+                          }),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 40,
+                  width: MediaQuery.of(context).size.width,
+                  constraints: const BoxConstraints(maxWidth: 200),
+                  child: FilledButton(onPressed: () {}, child: const Text('Add')),
+                )
+              ],
             ),
-          )
+          ),
         ],
       ),
     ));
