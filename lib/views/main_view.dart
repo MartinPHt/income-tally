@@ -6,8 +6,6 @@ import 'package:income_tally/views/table_page.dart';
 import 'package:income_tally/widgets/home_page_header.dart';
 import 'package:income_tally/widgets/insights_page_header.dart';
 
-
-
 class MainView extends StatefulWidget {
   const MainView({super.key});
 
@@ -19,11 +17,11 @@ class MainViewState extends State<MainView> {
   int _selectedIndex = 0;
 
   // List of pages for each tab
-  final List<Widget> _pages = [
-    const HomePage(),
-    const InsidesPage(),
-    const TablePage(),
-  ];
+  final Map<int, Widget> _pages = {
+    0: const HomePage(),
+    1: const InsidesPage(),
+    2: const TablePage(),
+  };
 
   // List of page headers
   final List<Widget> _pageHeaders = [
@@ -39,64 +37,153 @@ class MainViewState extends State<MainView> {
     });
   }
 
+  Widget _generateSideNavButton(String unselectedImagePath,
+      String selectedImagePath, Widget label, int index) {
+    return FilledButton(
+      onPressed: () {
+        _onItemTapped(index);
+      },
+      style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          backgroundColor: Theme.of(context).canvasColor,
+          overlayColor: Colors.deepPurple[300],
+          surfaceTintColor: Colors.deepPurple[100],
+          foregroundColor: Colors.grey[700]),
+      child: Center(
+        child: Row(
+          children: [
+            _buildTabIconFromImages(
+                unselectedImagePath, selectedImagePath, index),
+            label
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool bottomNavBarVisible = true;
+    bool sideMenuVisible = false;
+
+    if (MediaQuery.of(context).size.width <= 700) {
+      //
+    } else if (MediaQuery.of(context).size.width <= 1200) {
+      //
+    } else {
+      sideMenuVisible = true;
+      bottomNavBarVisible = false;
+    }
+
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  stops: const [0.2, 0.6],
-                  colors: [
-                AppColors.instance.backgroundBlue,
-                AppColors.instance.backgroundPurple,
-              ])),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 100),
-            switchInCurve: Curves.easeIn,
-            switchOutCurve: Curves.easeOut,
-            transitionBuilder: (child, animation) {
-              return Stack(children: [
-                FadeTransition(
-                  opacity: animation,
-                  child: child,
+        body: Row(
+          children: [
+            Visibility(
+              visible: sideMenuVisible,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.20,
+                constraints: const BoxConstraints(maxWidth: 300),
+                color: Theme.of(context).canvasColor,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 30),
+                    Center(
+                      child: SizedBox(
+                        height: 150,
+                        width: MediaQuery.of(context).size.width,
+                        child: Image.asset('lib/icons/logo.png'),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      margin: EdgeInsets.only(left: 25, right: 25),
+                      height: 2,
+                      color: Colors.grey[300],
+                    ),
+                    const SizedBox(height: 15),
+                    _generateSideNavButton('lib/icons/house.png',
+                        'lib/icons/houseSelected.png', const Text('Home'), 0),
+                    const SizedBox(height: 5),
+                    _generateSideNavButton(
+                        'lib/icons/chart.png',
+                        'lib/icons/chartSelected.png',
+                        const Text('Insights'),
+                        1),
+                    const SizedBox(height: 5),
+                    _generateSideNavButton(
+                        'lib/icons/settings.png',
+                        'lib/icons/settingsSelected.png',
+                        const Text('Home'),
+                        2),
+                  ],
                 ),
-              ]);
-            },
-            child: Column(
-              key: ValueKey<int>(_selectedIndex),
-              children: [
-                SizedBox(
-                  height: 70,
-                  child: _pageHeaders[_selectedIndex],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        stops: const [
+                      0.2,
+                      0.6
+                    ],
+                        colors: [
+                      AppColors.instance.backgroundBlue,
+                      AppColors.instance.backgroundPurple,
+                    ])),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 100),
+                  switchInCurve: Curves.easeIn,
+                  switchOutCurve: Curves.easeOut,
+                  transitionBuilder: (child, animation) {
+                    return Stack(children: [
+                      FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      ),
+                    ]);
+                  },
+                  child: Column(
+                    key: ValueKey<int>(_selectedIndex),
+                    children: [
+                      SizedBox(
+                        height: 70,
+                        child: _pageHeaders[_selectedIndex],
+                      ),
+                      Expanded(child: _pages[_selectedIndex]!),
+                    ],
+                  ),
                 ),
-                Expanded(child: _pages[_selectedIndex]),
-              ],
-            ),
-          ),
-        ), // Displays the selected page
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          items: [
-            BottomNavigationBarItem(
-              icon: _buildTabIconFromImages(
-                  "lib/icons/house.png", "lib/icons/houseSelected.png", 0),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildTabIconFromImages(
-                  "lib/icons/chart.png", "lib/icons/chartSelected.png", 1),
-              label: 'Insights',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildTabIconFromImages(
-                  "lib/icons/settings.png", "lib/icons/settingsSelected.png", 2),
-              label: 'Expences',
+              ),
             ),
           ],
+        ), // Displays the selected page
+        bottomNavigationBar: Visibility(
+          visible: bottomNavBarVisible,
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildTabIconFromImages(
+                    "lib/icons/house.png", "lib/icons/houseSelected.png", 0),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildTabIconFromImages(
+                    "lib/icons/chart.png", "lib/icons/chartSelected.png", 1),
+                label: 'Insights',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildTabIconFromImages("lib/icons/settings.png",
+                    "lib/icons/settingsSelected.png", 2),
+                label: 'Expenses',
+              ),
+            ],
+          ),
         ),
       ),
     );

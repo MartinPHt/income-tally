@@ -3,32 +3,15 @@ import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/widgets/line_chart.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
 
-class HomePage extends StatelessWidget {
+//Mobile Layout
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      if (constraints.maxWidth <= 800) {
-        return const MobileHomeLayout();
-      } else if (constraints.maxWidth <= 1200) {
-        return const TabletHomeLayout();
-      } else {
-        return const TabletHomeLayout();
-      }
-    });
-  }
+  State<StatefulWidget> createState() => HomePageState();
 }
 
-//Mobile Layout
-class MobileHomeLayout extends StatefulWidget {
-  const MobileHomeLayout({super.key});
-
-  @override
-  State<StatefulWidget> createState() => MobileHomeLayoutState();
-}
-
-class MobileHomeLayoutState extends State<MobileHomeLayout> {
+class HomePageState extends State<HomePage> {
   final DraggableScrollableController sheetController =
       DraggableScrollableController();
 
@@ -188,68 +171,5 @@ class MobileHomeLayoutState extends State<MobileHomeLayout> {
         },
       ),
     ]);
-  }
-}
-
-class TabletHomeLayout extends StatefulWidget {
-  const TabletHomeLayout({super.key});
-
-  @override
-  State<StatefulWidget> createState() => TabletHomeLayoutState();
-}
-
-class TabletHomeLayoutState extends State<TabletHomeLayout> {
-  final DraggableScrollableController sheetController =
-      DraggableScrollableController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 6,
-          child: ListView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              children: [
-                //First rounded container
-                RoundedContainer(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: double.infinity,
-                  margin: const EdgeInsets.only(
-                      left: 25, top: 25, right: 15, bottom: 25),
-                  constraints: const BoxConstraints(minWidth: 300),
-                  borderThickness: 0.01,
-                  gradient: LinearGradient(colors: [
-                    AppColors.instance.backgroundPurple,
-                    AppColors.instance.backgroundBlue,
-                  ]),
-                ),
-                //Second rounded container
-                RoundedContainer(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: double.infinity,
-                  margin: const EdgeInsets.only(
-                      left: 15, top: 25, right: 25, bottom: 25),
-                  constraints: const BoxConstraints(minWidth: 300),
-                ),
-              ]),
-        ),
-        Expanded(
-          flex: 6,
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: double.infinity,
-              margin: const EdgeInsets.only(
-                  left: 25, top: 10, right: 25, bottom: 10),
-              constraints: const BoxConstraints(minWidth: 300),
-              child: RoundedContainer(child: MonthlyExpenseBarChart())),
-        ),
-        Expanded(
-          flex: 3,
-          child: Container(),
-        )
-      ],
-    );
   }
 }

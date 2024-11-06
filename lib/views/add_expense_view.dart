@@ -38,9 +38,10 @@ class AddExpenseViewState extends State<AddExpenseView> {
 
   @override
   Widget build(BuildContext context) {
-    double startHeight = MediaQuery.of(context).size.height / 6;
+    double startHeight = MediaQuery.of(context).size.height / 7;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    double buttonsHeight = 50;
 
     double decorWidth;
     double decorHeight;
@@ -145,7 +146,7 @@ class AddExpenseViewState extends State<AddExpenseView> {
                       fontSize: 16,
                     )),
                 Container(
-                  margin: const EdgeInsets.only(top: 20, bottom: 10),
+                  margin: const EdgeInsets.only(top: 30, bottom: 10),
                   child: const Text("Title",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -158,7 +159,7 @@ class AddExpenseViewState extends State<AddExpenseView> {
                           border: OutlineInputBorder(), hintText: "Title"),
                     )),
                 Container(
-                  margin: const EdgeInsets.only(top: 20, bottom: 10),
+                  margin: const EdgeInsets.only(top: 30, bottom: 10),
                   child: const Text("Total",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -174,16 +175,18 @@ class AddExpenseViewState extends State<AddExpenseView> {
                             RegExp(r"^\d+(\.(\d+)?)?$")),
                       ],
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(), hintText: 'Total'),
+                          border: OutlineInputBorder(),
+                          hintText: 'Total',
+                          hintStyle: TextStyle()),
                     )),
                 Container(
-                  margin: const EdgeInsets.only(top: 20, bottom: 10),
+                  margin: const EdgeInsets.only(top: 30, bottom: 10),
                   child: const Text("Category",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top: 10, bottom: 10),
+                  margin: const EdgeInsets.only(bottom: 10),
                   child: DropdownMenu<String>(
                     width: widgetsMaxWidth,
                     initialSelection: selectedExpenseType.isNotEmpty
@@ -219,7 +222,7 @@ class AddExpenseViewState extends State<AddExpenseView> {
                 Row(
                   children: [
                     Container(
-                      height: 45,
+                      height: buttonsHeight,
                       margin: const EdgeInsets.only(left: 5, right: 15),
                       width: isCancelButtonVisible
                           ? (widgetsMaxWidth - 40) * 0.50
@@ -230,12 +233,12 @@ class AddExpenseViewState extends State<AddExpenseView> {
                     Visibility(
                       visible: isCancelButtonVisible,
                       child: Container(
-                        height: 45,
+                        height: buttonsHeight,
                         margin: const EdgeInsets.only(left: 15, right: 5),
                         width: (widgetsMaxWidth - 40) * 0.50,
                         child: Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(30),
                               border: Border.all(
                                   width: 1.5,
                                   color: Theme.of(context).primaryColor)),
