@@ -1,9 +1,9 @@
-class AppColors {
-  static final AppColors instance = AppColors._internal();
+class AComm {
+  static final AComm instance = AComm._internal();
 
-  factory AppColors() {
+  factory AComm() {
     return instance;
   }
 
-  AppColors._internal();
+  AComm._internal();
 }

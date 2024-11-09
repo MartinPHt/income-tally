@@ -97,7 +97,7 @@ class MainViewState extends State<MainView> {
                     ),
                     const SizedBox(height: 30),
                     Container(
-                      margin: EdgeInsets.only(left: 25, right: 25),
+                      margin: const EdgeInsets.only(left: 25, right: 25),
                       height: 2,
                       color: Colors.grey[300],
                     ),
@@ -122,17 +122,17 @@ class MainViewState extends State<MainView> {
             ),
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
-                        stops: const [
+                        stops: [
                       0.2,
                       0.6
                     ],
                         colors: [
-                      AppColors.instance.backgroundBlue,
-                      AppColors.instance.backgroundPurple,
+                      AppColors.backgroundBlue,
+                      AppColors.backgroundPurple,
                     ])),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 100),

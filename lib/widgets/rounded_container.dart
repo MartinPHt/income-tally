@@ -36,11 +36,11 @@ class RoundedContainer extends StatelessWidget {
 
     // Check if the current theme is dark
     if (Theme.of(context).brightness == Brightness.dark) {
-      darkerColor = AppColors.instance.changeLightness(primaryColor, 0.005);
-      lighterColor = AppColors.instance.changeLightness(primaryColor, 0.010);
+      darkerColor = AppColors.changeLightness(primaryColor, 0.005);
+      lighterColor = AppColors.changeLightness(primaryColor, 0.010);
     } else {
-      darkerColor = AppColors.instance.changeLightness(primaryColor, 0.000);
-      lighterColor = AppColors.instance.changeLightness(primaryColor, -0.015);
+      darkerColor = AppColors.changeLightness(primaryColor, 0.000);
+      lighterColor = AppColors.changeLightness(primaryColor, -0.015);
     }
 
     return Center(

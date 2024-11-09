@@ -10,20 +10,17 @@ class CustomScrollBehavior extends MaterialScrollBehavior {
   };
 }
 
-class AppColors {
-  static final AppColors instance = AppColors._internal();
+abstract class AppColors {
 
-  factory AppColors() {
-    return instance;
-  }
-
-  AppColors._internal();
-
-  final Color backgroundPurple = const Color(0xffeee4f8);
-  final Color backgroundBlue = const Color(0xffdfe0f3);
+  static const Color backgroundPurple = Color(0xffeee4f8);
+  static const Color backgroundBlue = Color(0xffdfe0f3);
+  static const Color contentColorPurple = Color(0xffd68df3);
+  static const Color contentColorBlue = Color(0xff7ca5f1);
+  static const Color mainGridLineColor = Color(0xffbfbfbf);
+  static const Color textColor = Color(0xff424242);
 
   // Function to change the lightness of a color
-  Color changeLightness(Color color, double amount) {
+  static Color changeLightness(Color color, double amount) {
     final hsl = HSLColor.fromColor(color);
     final newLightness = (hsl.lightness + amount).clamp(0.0, 1.0);
     final newHsl = hsl.withLightness(newLightness);
