@@ -12,6 +12,7 @@ class RoundedContainer extends StatelessWidget {
   final EdgeInsets? margin;
   final EdgeInsets? padding;
   final BoxConstraints? constraints;
+  final AlignmentGeometry? alignment;
 
   const RoundedContainer({
     super.key,
@@ -23,7 +24,8 @@ class RoundedContainer extends StatelessWidget {
     this.margin,
     this.padding,
     this.gradient,
-    this.constraints
+    this.constraints,
+    this.alignment = Alignment.center
   });
 
   @override
@@ -43,33 +45,32 @@ class RoundedContainer extends StatelessWidget {
       lighterColor = AppColors.changeLightness(primaryColor, -0.015);
     }
 
-    return Center(
-      child: Container(
-        width: width,
-        height: height,
-        margin: margin,
-        padding: padding,
-        constraints: constraints,
-        decoration: BoxDecoration(
-          color: primaryColor,
-          gradient: gradient ?? LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [darkerColor, lighterColor],
-          ),
-          borderRadius: BorderRadius.circular(cornerRadius),
-          border: Border.all(width: borderThickness, color: primaryColor),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.deepPurple.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 15,
-              offset: const Offset(0, 3),
-            ),
-          ],
+    return Container(
+      alignment: alignment,
+      width: width,
+      height: height,
+      margin: margin,
+      padding: padding,
+      constraints: constraints,
+      decoration: BoxDecoration(
+        color: primaryColor,
+        gradient: gradient ?? LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [darkerColor, lighterColor],
         ),
-        child: child
+        borderRadius: BorderRadius.circular(cornerRadius),
+        border: Border.all(width: borderThickness, color: primaryColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurple.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 15,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
+      child: child
     );
   }
 }

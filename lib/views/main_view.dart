@@ -66,11 +66,7 @@ class MainViewState extends State<MainView> {
     bool bottomNavBarVisible = true;
     bool sideMenuVisible = false;
 
-    if (MediaQuery.of(context).size.width <= 700) {
-      //
-    } else if (MediaQuery.of(context).size.width <= 1200) {
-      //
-    } else {
+    if (MediaQuery.of(context).size.width > 1200) {
       sideMenuVisible = true;
       bottomNavBarVisible = false;
     }

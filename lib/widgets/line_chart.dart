@@ -49,18 +49,15 @@ class _CustomLineChartState extends State<CustomLineChart> {
 
     return Stack(
       children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1.70,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              right: 18,
-              left: 25,
-              top: 24,
-              bottom: 12,
-            ),
-            child: LineChart(
-              showAvg ? avgData(averageValue) : mainData(),
-            ),
+        Padding(
+          padding: const EdgeInsets.only(
+            right: 18,
+            left: 25,
+            top: 24,
+            bottom: 12,
+          ),
+          child: LineChart(
+            showAvg ? avgData(averageValue) : mainData(),
           ),
         ),
         Container(
@@ -203,7 +200,7 @@ class _CustomLineChartState extends State<CustomLineChart> {
     var values = widget.data.map((data) => data.x).toList();
 
     return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
+      //lineTouchData: const LineTouchData(enabled: true),
       gridData: FlGridData(
         show: true,
         drawHorizontalLine: true,
