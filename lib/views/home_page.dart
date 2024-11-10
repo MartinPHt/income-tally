@@ -54,6 +54,53 @@ class HomePageState extends State<HomePage> {
                               AppColors.backgroundPurple,
                               AppColors.backgroundBlue,
                             ]),
+                            child: Container(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Positioned(
+                                      top: 20,
+                                      left: 10,
+                                      child: Image.asset(
+                                        "lib/icons/moneyIcon.png",
+                                        width: 30,
+                                        height: 30,
+                                      )),
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Available resources",
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "2500 BGN",
+                                              style: TextStyle(
+                                                  color: Colors.grey[900],
+                                                  fontSize: 28,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                           //Second rounded container
                           RoundedContainer(
