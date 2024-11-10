@@ -6,7 +6,13 @@ import 'package:income_tally/services/helpers.dart';
 
 class CustomLineChart extends StatefulWidget {
   final List<FlSpot> data;
-  const CustomLineChart({super.key, this.data = const []});
+  final Widget Function(double, TitleMeta) bottomTitlesGenerator;
+
+  const CustomLineChart({
+    super.key,
+    this.data = const [],
+    this.bottomTitlesGenerator = defaultGetTitle,
+  });
 
   @override
   State<CustomLineChart> createState() => _CustomLineChartState();
@@ -19,12 +25,6 @@ class _CustomLineChartState extends State<CustomLineChart> {
   ];
 
   bool showAvg = false;
-
-  static const style = TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 15,
-    color: AppColors.textColor,
-  );
 
   // style of the chart's background lines
   static drawChartLine() {
@@ -44,7 +44,8 @@ class _CustomLineChartState extends State<CustomLineChart> {
 
   @override
   Widget build(BuildContext context) {
-    double sumOfAllValues = widget.data.map((value) => value.y).reduce((a, b) => a + b);
+    double sumOfAllValues =
+        widget.data.map((value) => value.y).reduce((a, b) => a + b);
     double averageValue = sumOfAllValues / widget.data.length;
 
     return Stack(
@@ -52,8 +53,8 @@ class _CustomLineChartState extends State<CustomLineChart> {
         Padding(
           padding: const EdgeInsets.only(
             right: 18,
-            left: 25,
-            top: 24,
+            left: 20,
+            top: 45,
             bottom: 12,
           ),
           child: LineChart(
@@ -61,7 +62,7 @@ class _CustomLineChartState extends State<CustomLineChart> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(left: 10, top: 5),
+          margin: const EdgeInsets.only(left: 15),
           width: 50,
           height: 34,
           child: TextButton(
@@ -83,56 +84,12 @@ class _CustomLineChartState extends State<CustomLineChart> {
     );
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
-        break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
-
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: text,
-    );
-  }
-
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '10K';
-        break;
-      case 3:
-        text = '30k';
-        break;
-      case 5:
-        text = '50k';
-        break;
-      default:
-        return Container();
-    }
-
-    return Text(text, style: style, textAlign: TextAlign.left);
-  }
-
   LineChartData mainData() {
     return LineChartData(
       //Grid style (background grid)
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
-        horizontalInterval: 1,
-        verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
           return drawChartLine();
         },
@@ -154,27 +111,25 @@ class _CustomLineChartState extends State<CustomLineChart> {
             showTitles: true,
             reservedSize: 30,
             interval: 1,
-            getTitlesWidget: bottomTitleWidgets,
+            getTitlesWidget: widget.bottomTitlesGenerator,
           ),
         ),
-        leftTitles: AxisTitles(
+        leftTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 1,
-            getTitlesWidget: leftTitleWidgets,
+            //getTitlesWidget: leftTitleWidgets,
             reservedSize: 42,
           ),
         ),
       ),
       borderData: generateFlBorderData(),
       minX: 0,
-      maxX: 11,
       minY: 0,
-      maxY: 6,
       lineBarsData: [
         LineChartBarData(
           spots: widget.data,
           isCurved: true,
+          preventCurveOverShooting: true,
           gradient: LinearGradient(
             colors: gradientColors,
           ),
@@ -204,8 +159,6 @@ class _CustomLineChartState extends State<CustomLineChart> {
       gridData: FlGridData(
         show: true,
         drawHorizontalLine: true,
-        verticalInterval: 1,
-        horizontalInterval: 1,
         getDrawingVerticalLine: (value) {
           return drawChartLine();
         },
@@ -219,16 +172,14 @@ class _CustomLineChartState extends State<CustomLineChart> {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
+            getTitlesWidget: widget.bottomTitlesGenerator,
             interval: 1,
           ),
         ),
-        leftTitles: AxisTitles(
+        leftTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
             reservedSize: 42,
-            interval: 1,
           ),
         ),
         topTitles: const AxisTitles(
@@ -240,14 +191,12 @@ class _CustomLineChartState extends State<CustomLineChart> {
       ),
       borderData: generateFlBorderData(),
       minX: 0,
-      maxX: 11,
       minY: 0,
-      maxY: 6,
       lineBarsData: [
         LineChartBarData(
           spots: [
-             FlSpot(values.reduce(min), averageValue),
-             FlSpot(values.reduce(max), averageValue),
+            FlSpot(values.reduce(min), averageValue),
+            FlSpot(values.reduce(max), averageValue),
           ],
           isCurved: true,
           gradient: LinearGradient(

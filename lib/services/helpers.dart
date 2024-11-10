@@ -27,3 +27,11 @@ abstract class AppColors {
     return newHsl.toColor();
   }
 }
+
+abstract class AppStyles {
+  static const lineChartHeadersStyle = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 10,
+    color: AppColors.textColor,
+  );
+}

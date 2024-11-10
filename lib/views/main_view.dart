@@ -5,6 +5,7 @@ import 'package:income_tally/views/home_page.dart';
 import 'package:income_tally/views/table_page.dart';
 import 'package:income_tally/widgets/home_page_header.dart';
 import 'package:income_tally/widgets/insights_page_header.dart';
+import 'package:income_tally/widgets/table_page_header.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});
@@ -27,7 +28,7 @@ class MainViewState extends State<MainView> {
   final List<Widget> _pageHeaders = [
     const HomePageHeader(),
     const InsightsPageHeader(),
-    const Text("Table"),
+    const TablePageHeader(),
   ];
 
   // Function to handle tab switching
