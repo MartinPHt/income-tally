@@ -56,16 +56,16 @@ class AddExpenseViewState extends State<AddExpenseView> {
       decorHeight = screenHeight * 0.30;
       widgetsMaxWidth = screenWidth * 0.60;
       mainLeftMargin = 50;
-      decorRight = 40;
-      decorBottom = 60;
+      decorRight = 30;
+      decorBottom = 50;
       isCancelButtonVisible = false;
     } else if (screenWidth <= 1280) {
       decorWidth = screenWidth * 0.50;
       decorHeight = screenHeight * 0.60;
       widgetsMaxWidth = screenWidth * 0.35;
       mainLeftMargin = 120;
-      decorRight = 80;
-      decorBottom = 100;
+      decorRight = 60;
+      decorBottom = 80;
       isCancelButtonVisible = false;
     } else if (screenWidth <= 1680) {
       decorWidth = screenWidth * 0.50;
@@ -83,6 +83,11 @@ class AddExpenseViewState extends State<AddExpenseView> {
       decorRight = 450;
       decorBottom = 120;
       isCancelButtonVisible = true;
+    }
+
+    if (screenWidth <= 500 && screenHeight <= 850 ) {
+      decorWidth = 0;
+      decorHeight = 0;
     }
 
     return SafeArea(

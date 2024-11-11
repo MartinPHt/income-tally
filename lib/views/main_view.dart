@@ -87,7 +87,7 @@ class MainViewState extends State<MainView> {
                     const SizedBox(height: 30),
                     Center(
                       child: SizedBox(
-                        height: 150,
+                        height: 120,
                         width: MediaQuery.of(context).size.width,
                         child: Image.asset('lib/icons/logo.png'),
                       ),
