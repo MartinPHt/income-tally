@@ -23,20 +23,57 @@ class InsidesPageState extends State<InsidesPage> {
           Wrap(
             children: [
               RoundedContainer(
-                padding: const EdgeInsets.all(30),
+                padding: const EdgeInsets.all(20),
                 height: MediaQuery.of(context).size.height / graphCount,
-                constraints: const BoxConstraints(minHeight: 300, minWidth: 1300),
-                margin:
-                const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 20),
+                constraints:
+                    const BoxConstraints(minHeight: 500, minWidth: 1300),
+                margin: const EdgeInsets.only(
+                    left: 20, top: 10, right: 20, bottom: 20),
                 child: Row(
                   children: [
                     Expanded(
                       child: CustomPieChart(
                         dataSet: [
-                          PieChartDataEntity(value: 30, color: Colors.red, title: '30%', legendHeader: 'House'),
-                          PieChartDataEntity(value: 20, color: Colors.yellow, title: '20%', legendHeader: 'Car'),
-                          PieChartDataEntity(value: 30, color: Colors.blue, title: '30%', legendHeader: 'Education'),
-                          PieChartDataEntity(value: 10, color: Colors.green, title: '10%', legendHeader: 'Entertainment'),
+                          PieChartDataEntity(
+                              value: 25,
+                              color: const Color(0xffc6a3ea),
+                              title: '25%',
+                              legendHeader: 'Housing'),
+                          PieChartDataEntity(
+                              value: 30,
+                              color: const Color(0xffe3d4ef),
+                              title: '30%',
+                              legendHeader: 'Food'),
+                          PieChartDataEntity(
+                              value: 15,
+                              color: const Color(0xff9d49e4),
+                              title: '15%',
+                              legendHeader: 'Transportation'),
+                          PieChartDataEntity(
+                              value: 30,
+                              color: const Color(0xffba82e4),
+                              title: '30%',
+                              legendHeader: 'Health'),
+                          PieChartDataEntity(
+                              value: 30,
+                              color: const Color(0xffba82e4),
+                              title: '30%',
+                              legendHeader: 'Health'),
+                          PieChartDataEntity(
+                              value: 30,
+                              color: const Color(0xffba82e4),
+                              title: '30%',
+                              legendHeader: 'Health'),
+                          PieChartDataEntity(
+                              value: 30,
+                              color: const Color(0xffba82e4),
+                              title: '30%',
+                              legendHeader: 'Health'),
+                          PieChartDataEntity(
+                              value: 30,
+                              color: const Color(0xffba82e4),
+                              title: '30%',
+                              legendHeader: 'Health'),
                         ],
                         //centerSpaceRadius: 1,
                       ),
@@ -57,7 +94,6 @@ class InsidesPageState extends State<InsidesPage> {
               ),
             ],
           ),
-
         ]));
   }
 }

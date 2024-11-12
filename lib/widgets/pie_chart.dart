@@ -17,51 +17,57 @@ class _CustomPieChartState extends State<CustomPieChart> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Flexible(
-          fit: FlexFit.tight,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final dynamicRadius =
-                  (constraints.maxWidth < constraints.maxHeight
-                          ? constraints.maxWidth
-                          : constraints.maxHeight) *
-                      0.45;
+    return LayoutBuilder(builder: (context, constraints) {
+      final bool isPortrait = constraints.maxWidth < constraints.maxHeight;
+      final EdgeInsets internalChartMargin = isPortrait ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(right: 30);
+      double legendMarkerSize = 20;
+      double selectedLegendMarkerSize = 24;
+      double legendMarkerBottomDistance = 10;
+      double selectedLegendMarkerBottomDistance = 6;
+      double legendTitleFontSize = 20;
+      if (constraints.maxHeight < 500 ) {
+        legendTitleFontSize = 14;
+        legendMarkerSize = 18;
+        selectedLegendMarkerSize = 20;
+        legendMarkerBottomDistance = 12;
+        selectedLegendMarkerBottomDistance = 10;
+      }
 
-              return PieChart(
-                PieChartData(
-                  pieTouchData: PieTouchData(
-                    touchCallback: (event, pieTouchResponse) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          pieChartTouchedIndex = -1;
-                          return;
-                        }
-                        pieChartTouchedIndex = pieTouchResponse
-                            .touchedSection!.touchedSectionIndex;
-                      });
-                    },
-                  ),
-                  centerSpaceRadius: 0,
-                  sectionsSpace: 0,
-                  sections: showingSections(dynamicRadius),
+      List<Widget> widgetTree = [
+        Expanded(
+          child: Container(
+            margin: internalChartMargin,
+            child: PieChart(
+              PieChartData(
+                pieTouchData: PieTouchData(
+                  touchCallback: (event, pieTouchResponse) {
+                    setState(() {
+                      if (!event.isInterestedForInteractions ||
+                          pieTouchResponse == null ||
+                          pieTouchResponse.touchedSection == null) {
+                        pieChartTouchedIndex = -1;
+                        return;
+                      }
+                      pieChartTouchedIndex =
+                          pieTouchResponse.touchedSection!.touchedSectionIndex;
+                    });
+                  },
                 ),
-              );
-            },
+                sectionsSpace: 0,
+                sections: showingSections(),
+              ),
+            ),
           ),
         ),
         IntrinsicHeight(
           child: IntrinsicWidth(
             child: Container(
-              margin: const EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 5),
+              margin: const EdgeInsets.only(
+                  left: 15, top: 15, right: 15, bottom: 0),
               child: Column(
                 children: List.generate(widget.dataSet.length, (i) {
                   var dataEntity = widget.dataSet[i];
-
+                  bool isSelected = i == pieChartTouchedIndex;
                   return Column(
                     children: [
                       Row(
@@ -70,20 +76,23 @@ class _CustomPieChartState extends State<CustomPieChart> {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
                                 color: dataEntity.color),
-                            width: 20,
-                            height: 20,
+                            width: isSelected ? selectedLegendMarkerSize : legendMarkerSize,
+                            height: isSelected ? selectedLegendMarkerSize : legendMarkerSize,
                           ),
-                          const SizedBox(
-                            width: 10,
+                          SizedBox(
+                            width: isSelected ? selectedLegendMarkerBottomDistance : legendMarkerBottomDistance,
                           ),
                           Expanded(
                               child: Text(
                             dataEntity.legendHeader,
-                            style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+                            style: TextStyle(
+                                fontSize: legendTitleFontSize, color: Colors.grey[700]),
                           ))
                         ],
                       ),
-                      const SizedBox(height: 5,)
+                      const SizedBox(
+                        height: 5,
+                      )
                     ],
                   );
                 }),
@@ -91,15 +100,25 @@ class _CustomPieChartState extends State<CustomPieChart> {
             ),
           ),
         )
-      ],
-    );
+      ];
+
+      return isPortrait
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: widgetTree,
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: widgetTree,
+            );
+    });
   }
 
-  List<PieChartSectionData> showingSections(double dynamicRadius) {
+  List<PieChartSectionData> showingSections() {
     return List.generate(widget.dataSet.length, (i) {
       final isTouched = i == pieChartTouchedIndex;
       final fontSize = isTouched ? 20.0 : 14.0;
-      final radius = isTouched ? dynamicRadius + 10 : dynamicRadius;
+      //final radius = isTouched ? dynamicRadius + 5 : dynamicRadius;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
 
       var dataEntity = widget.dataSet[i];
@@ -108,7 +127,7 @@ class _CustomPieChartState extends State<CustomPieChart> {
           color: dataEntity.color,
           value: dataEntity.value,
           title: dataEntity.title,
-          radius: radius,
+          //radius: radius,
           titleStyle: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
