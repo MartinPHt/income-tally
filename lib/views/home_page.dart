@@ -94,7 +94,7 @@ class HomePageState extends State<HomePage> {
                                           Row(
                                             children: [
                                               Text(
-                                                "Available resources",
+                                                "Available money",
                                                 style: TextStyle(
                                                   color: Colors.grey[600],
                                                 ),

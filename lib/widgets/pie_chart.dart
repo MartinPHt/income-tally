@@ -113,7 +113,8 @@ class _CustomPieChartState extends State<CustomPieChart> {
                             dataEntity.legendHeader,
                             style: TextStyle(
                                 fontSize: legendTitleFontSize,
-                                color: Colors.grey[700]),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600]),
                           ))
                         ],
                       ),
