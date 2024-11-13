@@ -19,13 +19,15 @@ class _CustomPieChartState extends State<CustomPieChart> {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       final bool isPortrait = constraints.maxWidth < constraints.maxHeight;
-      final EdgeInsets internalChartMargin = isPortrait ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(right: 30);
+      final EdgeInsets internalChartMargin = isPortrait
+          ? const EdgeInsets.only(bottom: 10)
+          : const EdgeInsets.only(right: 30, top: 20, bottom: 20);
       double legendMarkerSize = 20;
       double selectedLegendMarkerSize = 24;
       double legendMarkerBottomDistance = 10;
       double selectedLegendMarkerBottomDistance = 6;
       double legendTitleFontSize = 20;
-      if (constraints.maxHeight < 500 ) {
+      if (constraints.maxHeight < 500) {
         legendTitleFontSize = 14;
         legendMarkerSize = 18;
         selectedLegendMarkerSize = 20;
@@ -38,24 +40,42 @@ class _CustomPieChartState extends State<CustomPieChart> {
           child: Container(
             margin: internalChartMargin,
             child: PieChart(
-              PieChartData(
-                pieTouchData: PieTouchData(
-                  touchCallback: (event, pieTouchResponse) {
-                    setState(() {
-                      if (!event.isInterestedForInteractions ||
-                          pieTouchResponse == null ||
-                          pieTouchResponse.touchedSection == null) {
-                        pieChartTouchedIndex = -1;
-                        return;
-                      }
-                      pieChartTouchedIndex =
-                          pieTouchResponse.touchedSection!.touchedSectionIndex;
-                    });
-                  },
-                ),
-                sectionsSpace: 0,
-                sections: showingSections(),
-              ),
+              widget.dataSet.isNotEmpty
+                  ? PieChartData(
+                      pieTouchData: PieTouchData(
+                        touchCallback: (event, pieTouchResponse) {
+                          setState(() {
+                            if (!event.isInterestedForInteractions ||
+                                pieTouchResponse == null ||
+                                pieTouchResponse.touchedSection == null) {
+                              pieChartTouchedIndex = -1;
+                              return;
+                            }
+                            pieChartTouchedIndex = pieTouchResponse
+                                .touchedSection!.touchedSectionIndex;
+                          });
+                        },
+                      ),
+                      sectionsSpace: 0,
+                      sections: showingSections(),
+                    )
+                  : PieChartData(
+                      sections: [
+                        PieChartSectionData(
+                            showTitle: true,
+                            color: Colors.grey[400],
+                            value: 1,
+                            title: '0%',
+                            //radius: radius,
+                            titleStyle: TextStyle(
+                              fontSize: legendTitleFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              //shadows: shadows
+                            ))
+                      ],
+                      sectionsSpace: 0,
+                    ),
             ),
           ),
         ),
@@ -76,17 +96,24 @@ class _CustomPieChartState extends State<CustomPieChart> {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
                                 color: dataEntity.color),
-                            width: isSelected ? selectedLegendMarkerSize : legendMarkerSize,
-                            height: isSelected ? selectedLegendMarkerSize : legendMarkerSize,
+                            width: isSelected
+                                ? selectedLegendMarkerSize
+                                : legendMarkerSize,
+                            height: isSelected
+                                ? selectedLegendMarkerSize
+                                : legendMarkerSize,
                           ),
                           SizedBox(
-                            width: isSelected ? selectedLegendMarkerBottomDistance : legendMarkerBottomDistance,
+                            width: isSelected
+                                ? selectedLegendMarkerBottomDistance
+                                : legendMarkerBottomDistance,
                           ),
                           Expanded(
                               child: Text(
                             dataEntity.legendHeader,
                             style: TextStyle(
-                                fontSize: legendTitleFontSize, color: Colors.grey[700]),
+                                fontSize: legendTitleFontSize,
+                                color: Colors.grey[700]),
                           ))
                         ],
                       ),
@@ -118,8 +145,7 @@ class _CustomPieChartState extends State<CustomPieChart> {
     return List.generate(widget.dataSet.length, (i) {
       final isTouched = i == pieChartTouchedIndex;
       final fontSize = isTouched ? 20.0 : 14.0;
-      //final radius = isTouched ? dynamicRadius + 5 : dynamicRadius;
-      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+      //const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
 
       var dataEntity = widget.dataSet[i];
       return PieChartSectionData(
@@ -129,10 +155,11 @@ class _CustomPieChartState extends State<CustomPieChart> {
           title: dataEntity.title,
           //radius: radius,
           titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows));
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            //shadows: shadows
+          ));
     });
   }
 }

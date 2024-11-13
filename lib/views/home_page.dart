@@ -13,15 +13,21 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  var months = ['MAR', 'APR', 'MAY', 'JUN', 'JULY'];
-
   final DraggableScrollableController sheetController =
       DraggableScrollableController();
+
+  bool areChartBotTitlesShortened = false;
 
   @override
   Widget build(BuildContext context) {
     bool isBottomExpenseListVisible = true;
     bool isRightExpenseListVisible = false;
+
+    if (MediaQuery.of(context).size.width < 800) {
+      areChartBotTitlesShortened = true;
+    } else {
+      areChartBotTitlesShortened = false;
+    }
 
     if (MediaQuery.of(context).size.width > 1200) {
       isBottomExpenseListVisible = false;
@@ -200,6 +206,12 @@ class HomePageState extends State<HomePage> {
                                     FlSpot(3, 120),
                                     FlSpot(4, 10),
                                     FlSpot(5, 700),
+                                    FlSpot(6, 700),
+                                    FlSpot(7, 400),
+                                    FlSpot(8, 700),
+                                    FlSpot(9, 234),
+                                    FlSpot(10, 654),
+                                    FlSpot(11, 32),
                                   ],
                                 )),
                           ),
@@ -296,7 +308,18 @@ class HomePageState extends State<HomePage> {
 
   Widget lineChartBottomTitles(double value, TitleMeta meta) {
     try {
-      Widget text = Text(months[value.toInt()]);
+      var style =
+          TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[800]);
+      String title;
+      if (areChartBotTitlesShortened) {
+        title = ChartHelper.monthsShortened[value.toInt()];
+      } else {
+        title = ChartHelper.months[value.toInt()];
+      }
+      Widget text = Text(
+        title,
+        style: style,
+      );
 
       return SideTitleWidget(
         axisSide: meta.axisSide,

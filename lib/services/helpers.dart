@@ -28,6 +28,12 @@ abstract class AppColors {
   }
 }
 
+abstract class ChartHelper {
+  //static fields
+  static List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  static List<String> monthsShortened = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+}
+
 abstract class AppStyles {
   static const lineChartHeadersStyle = TextStyle(
     fontWeight: FontWeight.bold,
