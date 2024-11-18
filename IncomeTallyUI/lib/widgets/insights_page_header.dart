@@ -9,7 +9,7 @@ class InsightsPageHeader extends StatelessWidget {
       children: [
          Container(
            margin: const EdgeInsets.only(left: 25),
-           child: const Text("Insights",
+           child: const Text("This Month",
            style: TextStyle(
              fontSize: 22,
              fontWeight: FontWeight.bold

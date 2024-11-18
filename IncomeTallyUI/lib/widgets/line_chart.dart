@@ -7,11 +7,12 @@ import 'package:income_tally/services/helpers.dart';
 class CustomLineChart extends StatefulWidget {
   final List<FlSpot> data;
   final Widget Function(double, TitleMeta) bottomTitlesGenerator;
+  final EdgeInsets? margin;
 
   const CustomLineChart({
     super.key,
     this.data = const [],
-    this.bottomTitlesGenerator = defaultGetTitle,
+    this.bottomTitlesGenerator = defaultGetTitle, this.margin,
   });
 
   @override
@@ -48,29 +49,19 @@ class _CustomLineChartState extends State<CustomLineChart> {
         widget.data.map((value) => value.y).reduce((a, b) => a + b);
     double averageValue = sumOfAllValues / widget.data.length;
 
-    return Stack(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(
-            right: 18,
-            left: 20,
-            top: 45,
-            bottom: 12,
-          ),
-          child: LineChart(
-            showAvg ? avgData(averageValue) : mainData(),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(left: 15),
-          width: 50,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
+    var lisOfWidgets = [
+      Container(
+        margin: const EdgeInsets.only(right: 10, bottom: 10),
+        width: 50,
+        height: 34,
+        child: TextButton(
+          onPressed: () {
+            setState(() {
+              showAvg = !showAvg;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 5),
             child: Text(
               showAvg ? 'exc' : 'avg',
               style: const TextStyle(
@@ -80,7 +71,38 @@ class _CustomLineChartState extends State<CustomLineChart> {
             ),
           ),
         ),
-      ],
+      ),
+      Expanded(
+        child: Container(
+          margin: const EdgeInsets.only(top: 5, right: 5),
+          child: LineChart(
+            showAvg ? avgData(averageValue) : mainData(),
+          ),
+        ),
+      ),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth <= 600) {
+          return Container(
+            margin: widget.margin,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: lisOfWidgets,
+            ),
+          );
+        }
+        else {
+          return Container(
+            margin: widget.margin,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: lisOfWidgets,
+            ),
+          );
+        }
+      }
     );
   }
 

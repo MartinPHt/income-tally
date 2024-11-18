@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:income_tally/Models/expense_model.dart';
+import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
 
@@ -13,28 +15,74 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final DraggableScrollableController sheetController =
-      DraggableScrollableController();
-
+  ScrollController _scrollController = ScrollController();
   bool areChartBotTitlesShortened = false;
+  bool _isLoading = false;
+
+  Future<void> _fetchExpenses() async {
+    //show loading circle
+    setState(() {
+      _isLoading = true;
+    });
+
+    //Todo: get from API. Remove this demo when implemented from API
+    await Future.delayed(const Duration(seconds: 2));
+    List<ExpenseModel> retrievedExpenses = generateTestExpenses();
+    DataController.instance.loadedExpensesInHomeScreen.addAll(retrievedExpenses);
+
+    //hide loading circle
+    setState(() {
+    _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+   // _fetchExpenses();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent && !_isLoading) {
+        _fetchExpenses();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    //_scrollController.dispose();
+    //_sheetController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     bool isBottomExpenseListVisible = true;
     bool isRightExpenseListVisible = false;
+    EdgeInsets chartMargin = const EdgeInsets.all(10);
 
-    if (MediaQuery.of(context).size.width < 800) {
+    if (MediaQuery
+        .of(context)
+        .size
+        .width < 800) {
       areChartBotTitlesShortened = true;
     } else {
       areChartBotTitlesShortened = false;
+      chartMargin = const EdgeInsets.all(20);
     }
 
-    if (MediaQuery.of(context).size.width > 1200) {
+    if (MediaQuery
+        .of(context)
+        .size
+        .width > 1200) {
       isBottomExpenseListVisible = false;
       isRightExpenseListVisible = true;
     }
 
-    if (MediaQuery.of(context).size.height < 550) {
+    if (MediaQuery
+        .of(context)
+        .size
+        .height < 550) {
       isBottomExpenseListVisible = false;
       isRightExpenseListVisible = false;
     }
@@ -43,7 +91,10 @@ class HomePageState extends State<HomePage> {
       SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Container(
-          height: MediaQuery.of(context).size.height -
+          height: MediaQuery
+              .of(context)
+              .size
+              .height -
               (isBottomExpenseListVisible ? 200 : 70),
           constraints: const BoxConstraints(maxHeight: 1200, minHeight: 600),
           child: Row(
@@ -60,7 +111,10 @@ class HomePageState extends State<HomePage> {
                           children: [
                             //First rounded container
                             RoundedContainer(
-                              width: MediaQuery.of(context).size.width / 2,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width / 2,
                               height: double.infinity,
                               margin: const EdgeInsets.only(
                                   left: 25, top: 25, right: 15, bottom: 15),
@@ -73,7 +127,7 @@ class HomePageState extends State<HomePage> {
                               ]),
                               child: Container(
                                 padding:
-                                    const EdgeInsets.only(left: 10, right: 10),
+                                const EdgeInsets.only(left: 10, right: 10),
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [
@@ -89,7 +143,7 @@ class HomePageState extends State<HomePage> {
                                       margin: const EdgeInsets.only(left: 10),
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
@@ -109,7 +163,7 @@ class HomePageState extends State<HomePage> {
                                                     color: Colors.grey[900],
                                                     fontSize: 28,
                                                     fontWeight:
-                                                        FontWeight.bold),
+                                                    FontWeight.bold),
                                               )
                                             ],
                                           ),
@@ -122,7 +176,10 @@ class HomePageState extends State<HomePage> {
                             ),
                             //Second rounded container
                             RoundedContainer(
-                              width: MediaQuery.of(context).size.width / 2,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width / 2,
                               height: double.infinity,
                               margin: const EdgeInsets.only(
                                   left: 15, top: 25, right: 25, bottom: 15),
@@ -150,7 +207,7 @@ class HomePageState extends State<HomePage> {
                                         margin: const EdgeInsets.only(left: 10),
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           children: [
                                             Row(
                                               children: [
@@ -170,7 +227,7 @@ class HomePageState extends State<HomePage> {
                                                       color: Colors.grey[900],
                                                       fontSize: 28,
                                                       fontWeight:
-                                                          FontWeight.bold),
+                                                      FontWeight.bold),
                                                 )
                                               ],
                                             ),
@@ -195,24 +252,26 @@ class HomePageState extends State<HomePage> {
                                     bottom: 70),
                                 padding: const EdgeInsets.all(10),
                                 constraints:
-                                    const BoxConstraints(maxWidth: 730),
+                                const BoxConstraints(maxWidth: 730),
                                 alignment: Alignment.topLeft,
-                                child: CustomLineChart(
-                                  bottomTitlesGenerator: lineChartBottomTitles,
-                                  data: const [
-                                    FlSpot(0, 240),
-                                    FlSpot(1, 590),
-                                    FlSpot(2, 360),
-                                    FlSpot(3, 120),
-                                    FlSpot(4, 10),
-                                    FlSpot(5, 700),
-                                    FlSpot(6, 700),
-                                    FlSpot(7, 400),
-                                    FlSpot(8, 700),
-                                    FlSpot(9, 234),
-                                    FlSpot(10, 654),
-                                    FlSpot(11, 32),
-                                  ],
+                                child: ValueListenableBuilder(
+                                  valueListenable: DataController
+                                      .instance.avgExpensesPerMonthNotifier,
+                                  builder: (context, value, child) {
+                                    List<FlSpot> dataSet = [];
+                                    if (value.isNotEmpty) {
+                                      dataSet = value.entries.map((entry) {
+                                        return FlSpot(entry.key, entry.value);
+                                      }).toList();
+                                    }
+
+                                    return CustomLineChart(
+                                      margin: chartMargin,
+                                      bottomTitlesGenerator:
+                                      lineChartBottomTitles,
+                                      data: dataSet,
+                                    );
+                                  },
                                 )),
                           ),
                         ],
@@ -248,15 +307,16 @@ class HomePageState extends State<HomePage> {
       Visibility(
         visible: isBottomExpenseListVisible,
         child: DraggableScrollableSheet(
-          controller: sheetController,
-          initialChildSize: 0.1,
-          minChildSize: 0.1,
+          initialChildSize: 0.2,
+          minChildSize: 0.2,
           maxChildSize: 0.990,
           builder: (BuildContext context, ScrollController scrollController) {
             return Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
               decoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
+                color: Theme
+                    .of(context)
+                    .canvasColor,
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(40),
                     topRight: Radius.circular(40)),
@@ -270,6 +330,7 @@ class HomePageState extends State<HomePage> {
                 ],
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   // The draggable handle
                   Container(
@@ -281,6 +342,9 @@ class HomePageState extends State<HomePage> {
                     ),
                     margin: const EdgeInsets.symmetric(vertical: 2),
                   ),
+                  Container(margin: const EdgeInsets.all(20),
+                      child: const Text('Expenses', style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),)),
                   Expanded(
                     child: SingleChildScrollView(
                       controller: scrollController,
@@ -288,10 +352,16 @@ class HomePageState extends State<HomePage> {
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: const ScrollPhysics(),
-                        itemCount: 30,
+                        itemCount: DataController.instance.loadedExpensesInHomeScreen.length + 1,
                         itemBuilder: (context, index) {
+                          if (index == DataController.instance.loadedExpensesInHomeScreen.length) {
+                            return _isLoading
+                                ? const Center(
+                                child: CircularProgressIndicator())
+                                : Container();
+                          }
                           return ListTile(
-                            title: Text('Item $index'),
+                            title: Text('Item ${DataController.instance.loadedExpensesInHomeScreen[index].title}'),
                           );
                         },
                       ),
@@ -309,7 +379,7 @@ class HomePageState extends State<HomePage> {
   Widget lineChartBottomTitles(double value, TitleMeta meta) {
     try {
       var style =
-          TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[800]);
+      TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[800]);
       String title;
       if (areChartBotTitlesShortened) {
         title = ChartHelper.monthsShortened[value.toInt()];
@@ -331,5 +401,122 @@ class HomePageState extends State<HomePage> {
         child: const Text(''),
       );
     }
+  }
+
+  List<ExpenseModel> generateTestExpenses() {
+    return [
+      ExpenseModel(
+          title: 'Car Payment',
+          total: 90,
+          category: ExpenseCategory.Other,
+          isRecurring: false,
+          time: DateTime(2024, 11))
+      ,
+      ExpenseModel(
+          title: 'House Insurance',
+          total: 30,
+          category: ExpenseCategory.Housing,
+          isRecurring: true,
+          time: DateTime(2024, 11)),
+      ExpenseModel(
+          title: 'Soft Uni',
+          total: 120,
+          category: ExpenseCategory.Education,
+          isRecurring: false,
+          time: DateTime(2024, 11)),
+      ExpenseModel(
+          title: 'Andrews suit',
+          total: 200,
+          category: ExpenseCategory.Clothing,
+          isRecurring: false,
+          time: DateTime(2024, 11)),
+      ExpenseModel(
+          title: 'Car Payment',
+          total: 120,
+          category: ExpenseCategory.Other,
+          isRecurring: false,
+          time: DateTime(2024, 10)),
+      ExpenseModel(
+          title: 'Medicine',
+          total: 250,
+          category: ExpenseCategory.Health,
+          isRecurring: false,
+          time: DateTime(2024, 10)),
+      ExpenseModel(
+          title: 'Housing',
+          total: 750,
+          category: ExpenseCategory.Housing,
+          isRecurring: false,
+          time: DateTime(2024, 9)),
+      ExpenseModel(
+          title: 'Housing',
+          total: 150,
+          category: ExpenseCategory.Housing,
+          isRecurring: false,
+          time: DateTime(2024, 8)),
+      ExpenseModel(
+          title: 'Housing',
+          total: 230,
+          category: ExpenseCategory.Housing,
+          isRecurring: false,
+          time: DateTime(2024, 7)),
+      ExpenseModel(
+          title: 'Car Payment',
+          total: 90,
+          category: ExpenseCategory.Other,
+          isRecurring: false,
+          time: DateTime(2024, 11)),
+      ExpenseModel(
+          title: 'House Insurance',
+          total: 30,
+          category: ExpenseCategory.Housing,
+          isRecurring: true,
+          time: DateTime(2024, 11)),
+      ExpenseModel(
+          title: 'Soft Uni',
+          total: 120,
+          category: ExpenseCategory.Education,
+          isRecurring: false,
+          time: DateTime(2024, 11)),
+      ExpenseModel(
+          title: 'Andrews suit',
+          total: 200,
+          category: ExpenseCategory.Clothing,
+          isRecurring: false,
+          time: DateTime(2024, 11)),
+      ExpenseModel(
+          title: 'Car Payment',
+          total: 120,
+          category: ExpenseCategory.Other,
+          isRecurring: false,
+          time: DateTime(2024, 10)),
+      ExpenseModel(
+          title: 'Medicine',
+          total: 250,
+          category: ExpenseCategory.Health,
+          isRecurring: false,
+          time: DateTime(2024, 10)),
+      ExpenseModel(
+          title: 'Housing',
+          total: 750,
+          category: ExpenseCategory.Housing,
+          isRecurring: false,
+          time: DateTime(2024, 9)),
+      ExpenseModel(
+          title: 'Housing',
+          total: 150,
+          category: ExpenseCategory.Housing,
+          isRecurring: false,
+          time: DateTime(2024, 8)),
+      ExpenseModel(
+          title: 'Housing',
+          total: 230,
+          category: ExpenseCategory.Housing,
+          isRecurring: false,
+          time: DateTime(2024, 7
+          )
+      )
+      ,
+    ];
   }
 }
