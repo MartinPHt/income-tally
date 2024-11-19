@@ -19,6 +19,8 @@ class HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
   bool areChartBotTitlesShortened = false;
   bool _isLoading = false;
+  double slidingPanelMinHeight = 120;
+  PanelController panelController = PanelController();
 
   Future<void> _fetchExpenses() async {
     //show loading circle
@@ -60,7 +62,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isBottomExpenseListVisible = true;
+    bool isSlidingUpPanelVisible = true;
     bool isRightExpenseListVisible = false;
     EdgeInsets chartMargin = const EdgeInsets.all(10);
     double screenWidth = MediaQuery.of(context).size.width;
@@ -74,12 +76,12 @@ class HomePageState extends State<HomePage> {
     }
 
     if (screenWidth > 1200) {
-      isBottomExpenseListVisible = false;
+      isSlidingUpPanelVisible = false;
       isRightExpenseListVisible = true;
     }
 
-    if (screenHeight < 550) {
-      isBottomExpenseListVisible = false;
+    if (screenHeight < 850) {
+      isSlidingUpPanelVisible = false;
       isRightExpenseListVisible = false;
     }
 
@@ -88,7 +90,7 @@ class HomePageState extends State<HomePage> {
         physics: const BouncingScrollPhysics(),
         child: Container(
           height: MediaQuery.of(context).size.height -
-              (isBottomExpenseListVisible ? 200 : 70),
+              (isSlidingUpPanelVisible ? 290 : 130),
           constraints: const BoxConstraints(maxHeight: 1200, minHeight: 600),
           child: Row(
             children: [
@@ -233,10 +235,10 @@ class HomePageState extends State<HomePage> {
                           Expanded(
                             child: RoundedContainer(
                                 margin: EdgeInsets.only(
-                                    left: 25,
-                                    top: 10,
-                                    right: isRightExpenseListVisible ? 0 : 30,
-                                    bottom: 70),
+                                  left: 25,
+                                  top: 10,
+                                  right: isRightExpenseListVisible ? 0 : 30,
+                                ),
                                 padding: const EdgeInsets.all(10),
                                 constraints:
                                     const BoxConstraints(maxWidth: 730),
@@ -251,7 +253,6 @@ class HomePageState extends State<HomePage> {
                                         return FlSpot(entry.key, entry.value);
                                       }).toList();
                                     }
-
                                     return CustomLineChart(
                                       margin: chartMargin,
                                       bottomTitlesGenerator:
@@ -264,6 +265,9 @@ class HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
+                    Visibility(
+                        visible: !isSlidingUpPanelVisible,
+                        child: const SizedBox(height: 40)),
                   ],
                 ),
               ),
@@ -293,29 +297,67 @@ class HomePageState extends State<HomePage> {
       ),
     ]);
 
-    if (isBottomExpenseListVisible) {
-      homePageBody = LayoutBuilder(builder: (context, constraints) {
-        return SlidingUpPanel(
-            maxHeight: constraints.maxHeight,
-            collapsed: const CircleAvatar(
-              child: Icon(Icons.account_balance),
+    if (isSlidingUpPanelVisible) {
+      homePageBody = SlidingUpPanel(
+          maxHeight: screenHeight - 150,
+          minHeight: slidingPanelMinHeight,
+          controller: panelController,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.deepPurple.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 15,
+              offset: const Offset(0, 3),
             ),
-            panelBuilder: (controller) {
-              return ListView.builder(
-                controller: controller,
-                itemCount: 25,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.account_balance),
+          ],
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          panelBuilder: (controller) {
+            return Column(
+              children: [
+                // Drag Handle
+                GestureDetector(
+                  onTap: togglePanel,
+                  child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Center(
+                          child: Container(
+                            width: 40,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                      ]
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: controller,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 20, top: 5, bottom: 15),
+                          child: const Text(
+                            'Expenses',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        ...generateTestExpensesWidgets()
+                      ],
                     ),
-                    title: Text('Item $index'),
-                  );
-                },
-              );
-            },
-            body: homePageBody);
-      });
+                  ),
+                ),
+              ],
+            );
+          },
+          body: homePageBody);
     }
 
     return homePageBody;
@@ -346,6 +388,24 @@ class HomePageState extends State<HomePage> {
         child: const Text(''),
       );
     }
+  }
+
+  void togglePanel() {
+    if (panelController.isPanelOpen) {
+      panelController.close();
+    }
+    else {
+      panelController.open();
+    }
+  }
+
+  List<Widget> generateTestExpensesWidgets() {
+    return [
+      const ListTile(
+        leading: CircleAvatar(
+          child: Icon(Icons.account_balance),
+        ),
+      ),
   }
 
   List<ExpenseModel> generateTestExpenses() {
