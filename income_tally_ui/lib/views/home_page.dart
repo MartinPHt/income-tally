@@ -81,7 +81,7 @@ class HomePageState extends State<HomePage> {
       isRightExpenseListVisible = true;
     }
 
-    if (screenHeight < 850) {
+    if (screenHeight < 780) {
       isSlidingUpPanelVisible = false;
       isRightExpenseListVisible = false;
     }
@@ -91,8 +91,8 @@ class HomePageState extends State<HomePage> {
         physics: const BouncingScrollPhysics(),
         child: Container(
           height: MediaQuery.of(context).size.height -
-              (isSlidingUpPanelVisible ? 290 : 130),
-          constraints: const BoxConstraints(maxHeight: 1200, minHeight: 600),
+              (isSlidingUpPanelVisible ? 300 : 130),
+          constraints: const BoxConstraints(maxHeight: 1200, minHeight: 500),
           child: Row(
             children: [
               Expanded(
@@ -279,15 +279,40 @@ class HomePageState extends State<HomePage> {
                   child: RoundedContainer(
                     cornerRadius: 20,
                     margin: const EdgeInsets.only(
-                        left: 30, top: 25, right: 25, bottom: 70),
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: 30,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text('Item $index'),
-                        );
-                      },
+                        left: 30, top: 25, right: 25, bottom: 40),
+                    padding:
+                        const EdgeInsets.only(left: 10, top: 10, right: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 20, top: 10, bottom: 15),
+                          child: const Text(
+                            'Expenses',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ...generateTestExpensesWidgets()
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -337,6 +362,7 @@ class HomePageState extends State<HomePage> {
                 Expanded(
                   child: SingleChildScrollView(
                     controller: controller,
+                    physics: const BouncingScrollPhysics(),
                     child: Row(
                       children: [
                         Expanded(
@@ -349,7 +375,8 @@ class HomePageState extends State<HomePage> {
                                 child: const Text(
                                   'Expenses',
                                   style: TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               ...generateTestExpensesWidgets()
