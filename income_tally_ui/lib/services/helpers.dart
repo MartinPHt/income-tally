@@ -11,7 +11,6 @@ class CustomScrollBehavior extends MaterialScrollBehavior {
 }
 
 abstract class AppColors {
-
   static const Color backgroundPurple = Color(0xffeee4f8);
   static const Color backgroundBlue = Color(0xffdfe0f3);
   static const Color contentColorPurple = Color(0xffd68df3);
@@ -40,4 +39,10 @@ abstract class AppStyles {
     fontSize: 10,
     color: AppColors.textColor,
   );
+}
+
+abstract class StringFormatter {
+  static String formatDateToDMY(DateTime dateTime) {
+    return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}';
+  }
 }

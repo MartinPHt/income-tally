@@ -4,6 +4,7 @@ import 'package:income_tally/Models/expense_model.dart';
 import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
+import 'package:income_tally/widgets/sliding_menu_item.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../widgets/line_chart.dart';
@@ -19,7 +20,7 @@ class HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
   bool areChartBotTitlesShortened = false;
   bool _isLoading = false;
-  double slidingPanelMinHeight = 120;
+  double slidingPanelMinHeight = 130;
   PanelController panelController = PanelController();
 
   Future<void> _fetchExpenses() async {
@@ -317,39 +318,44 @@ class HomePageState extends State<HomePage> {
                 // Drag Handle
                 GestureDetector(
                   onTap: togglePanel,
-                  child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 12,
+                  child: Column(children: [
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        Center(
-                          child: Container(
-                            width: 40,
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[400],
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                      ]
-                  ),
+                      ),
+                    ),
+                  ]),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
                     controller: controller,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Container(
-                          margin: const EdgeInsets.only(left: 20, top: 5, bottom: 15),
-                          child: const Text(
-                            'Expenses',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                    left: 20, top: 5, bottom: 5),
+                                child: const Text(
+                                  'Expenses',
+                                  style: TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              ...generateTestExpensesWidgets()
+                            ],
                           ),
                         ),
-                        ...generateTestExpensesWidgets()
                       ],
                     ),
                   ),
@@ -393,19 +399,23 @@ class HomePageState extends State<HomePage> {
   void togglePanel() {
     if (panelController.isPanelOpen) {
       panelController.close();
-    }
-    else {
+    } else {
       panelController.open();
     }
   }
 
   List<Widget> generateTestExpensesWidgets() {
-    return [
-      const ListTile(
-        leading: CircleAvatar(
-          child: Icon(Icons.account_balance),
-        ),
-      ),
+    return List.generate(25, (index) {
+      return SlidingMenuItem(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        model: ExpenseModel(
+            title: 'Softuni',
+            total: 90,
+            category: ExpenseCategory.Education,
+            isRecurring: false,
+            date: DateTime(2024, 11)),
+      );
+    });
   }
 
   List<ExpenseModel> generateTestExpenses() {
@@ -415,109 +425,109 @@ class HomePageState extends State<HomePage> {
           total: 90,
           category: ExpenseCategory.Other,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'House Insurance',
           total: 30,
           category: ExpenseCategory.Housing,
           isRecurring: true,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Soft Uni',
           total: 120,
           category: ExpenseCategory.Education,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Andrews suit',
           total: 200,
           category: ExpenseCategory.Clothing,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Car Payment',
           total: 120,
           category: ExpenseCategory.Other,
           isRecurring: false,
-          time: DateTime(2024, 10)),
+          date: DateTime(2024, 10)),
       ExpenseModel(
           title: 'Medicine',
           total: 250,
           category: ExpenseCategory.Health,
           isRecurring: false,
-          time: DateTime(2024, 10)),
+          date: DateTime(2024, 10)),
       ExpenseModel(
           title: 'Housing',
           total: 750,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 9)),
+          date: DateTime(2024, 9)),
       ExpenseModel(
           title: 'Housing',
           total: 150,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 8)),
+          date: DateTime(2024, 8)),
       ExpenseModel(
           title: 'Housing',
           total: 230,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 7)),
+          date: DateTime(2024, 7)),
       ExpenseModel(
           title: 'Car Payment',
           total: 90,
           category: ExpenseCategory.Other,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'House Insurance',
           total: 30,
           category: ExpenseCategory.Housing,
           isRecurring: true,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Soft Uni',
           total: 120,
           category: ExpenseCategory.Education,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Andrews suit',
           total: 200,
           category: ExpenseCategory.Clothing,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Car Payment',
           total: 120,
           category: ExpenseCategory.Other,
           isRecurring: false,
-          time: DateTime(2024, 10)),
+          date: DateTime(2024, 10)),
       ExpenseModel(
           title: 'Medicine',
           total: 250,
           category: ExpenseCategory.Health,
           isRecurring: false,
-          time: DateTime(2024, 10)),
+          date: DateTime(2024, 10)),
       ExpenseModel(
           title: 'Housing',
           total: 750,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 9)),
+          date: DateTime(2024, 9)),
       ExpenseModel(
           title: 'Housing',
           total: 150,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 8)),
+          date: DateTime(2024, 8)),
       ExpenseModel(
           title: 'Housing',
           total: 230,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 7)),
+          date: DateTime(2024, 7)),
     ];
   }
 }

@@ -5,14 +5,14 @@ class ExpenseModel {
   final double total;
   final ExpenseCategory category;
   final bool isRecurring;
-  final DateTime time;
+  final DateTime date;
 
   ExpenseModel(
       {required this.title,
       required this.total,
       required this.category,
       required this.isRecurring,
-      required this.time});
+      required this.date});
 }
 
 enum ExpenseCategory {

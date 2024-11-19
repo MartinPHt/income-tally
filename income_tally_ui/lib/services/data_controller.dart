@@ -25,55 +25,55 @@ class DataController {
           total: 90,
           category: ExpenseCategory.Other,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'House Insurance',
           total: 30,
           category: ExpenseCategory.Housing,
           isRecurring: true,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Soft Uni',
           total: 120,
           category: ExpenseCategory.Education,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Andrews suit',
           total: 200,
           category: ExpenseCategory.Clothing,
           isRecurring: false,
-          time: DateTime(2024, 11)),
+          date: DateTime(2024, 11)),
       ExpenseModel(
           title: 'Car Payment',
           total: 120,
           category: ExpenseCategory.Other,
           isRecurring: false,
-          time: DateTime(2024, 10)),
+          date: DateTime(2024, 10)),
       ExpenseModel(
           title: 'Medicine',
           total: 250,
           category: ExpenseCategory.Health,
           isRecurring: false,
-          time: DateTime(2024, 10)),
+          date: DateTime(2024, 10)),
       ExpenseModel(
           title: 'Housing',
           total: 750,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 9)),
+          date: DateTime(2024, 9)),
       ExpenseModel(
           title: 'Housing',
           total: 150,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 8)),
+          date: DateTime(2024, 8)),
       ExpenseModel(
           title: 'Housing',
           total: 230,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          time: DateTime(2024, 7)),
+          date: DateTime(2024, 7)),
     ];
 
     DateTime dateTime = DateTime.now();
@@ -82,12 +82,12 @@ class DataController {
 
     List<ExpenseModel> filteredExpenses = allExpenses
         .where((expense) =>
-            expense.time.year == thisYear && expense.time.month == thisMonth)
+            expense.date.year == thisYear && expense.date.month == thisMonth)
         .toList();
     updateExpensesPerTypeNotifier(filteredExpenses);
 
     filteredExpenses =
-        allExpenses.where((expense) => expense.time.year == thisYear).toList();
+        allExpenses.where((expense) => expense.date.year == thisYear).toList();
     updateAvgExpensesPerMonthNotifier(filteredExpenses);
   }
 
@@ -108,7 +108,7 @@ class DataController {
     Map<double, double> avgExpensesPerMonth = {};
     try {
       for (var expense in expenses) {
-        var key = expense.time.month.toDouble();
+        var key = expense.date.month.toDouble();
         if (avgExpensesPerMonth.containsKey(key)) {
           avgExpensesPerMonth[key] = avgExpensesPerMonth[key]! + expense.total;
         } else {
