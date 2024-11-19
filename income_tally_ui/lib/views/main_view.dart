@@ -19,7 +19,7 @@ class MainViewState extends State<MainView> {
 
   // List of pages for each tab
   final Map<int, Widget> _pages = {
-    0: HomePage(),
+    0: const HomePage(),
     1: const InsidesPage(),
     2: const TablePage(),
   };

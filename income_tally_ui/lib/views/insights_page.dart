@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:income_tally/Models/expense_model.dart';
 import 'package:income_tally/services/data_controller.dart';
-import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/widgets/line_chart.dart';
 import 'package:income_tally/widgets/pie_chart.dart';
 
@@ -151,7 +150,7 @@ class InsidesPageState extends State<InsidesPage> {
       String text = titleCategories[value.toInt()]!;
 
       Widget title = Container(
-        margin: EdgeInsets.only(top: 5),
+        margin: const EdgeInsets.only(top: 5),
         child: Text(
           text,
           style: style,
