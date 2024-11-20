@@ -30,10 +30,10 @@ class HomePageState extends State<HomePage> {
     });
 
     //Todo: get from API. Remove this demo when implemented from API
-    await Future.delayed(const Duration(seconds: 2));
-    List<ExpenseModel> retrievedExpenses = generateTestExpenses();
-    DataController.instance.loadedExpensesInHomeScreen
-        .addAll(retrievedExpenses);
+    // await Future.delayed(const Duration(seconds: 2));
+    // List<ExpenseModel> retrievedExpenses = generateTestExpenses();
+    // DataController.instance.loadedExpensesInHomeScreen
+    //     .addAll(retrievedExpenses);
 
     //hide loading circle
     setState(() {
@@ -246,7 +246,7 @@ class HomePageState extends State<HomePage> {
                                 alignment: Alignment.topLeft,
                                 child: ValueListenableBuilder(
                                   valueListenable: DataController
-                                      .instance.avgExpensesPerMonthNotifier,
+                                      .instance.avgExpensesPerMonth,
                                   builder: (context, value, child) {
                                     List<FlSpot> dataSet = [];
                                     if (value.isNotEmpty) {
@@ -297,18 +297,25 @@ class HomePageState extends State<HomePage> {
                         Expanded(
                           child: SingleChildScrollView(
                             physics: const BouncingScrollPhysics(),
-                            child: Row(
-                              children: [
-                                Expanded(
+                            child: ValueListenableBuilder(
+                              valueListenable: DataController.instance.allExpenses,
+                              builder: (context, value, child) {
+                                return Container(
+                                  margin: const EdgeInsets.only(left: 20, right: 20),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...generateTestExpensesWidgets()
-                                    ],
+                                    children: List.generate(
+                                        DataController.instance.allExpenses.value.length,
+                                            (index) {
+                                          return Container(
+                                            margin: const EdgeInsets.symmetric(vertical: 10),
+                                            child: SlidingUpPanelItem(
+                                                model: DataController
+                                                    .instance.allExpenses.value[index]),
+                                          );
+                                        }),
                                   ),
-                                ),
-                              ],
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -323,6 +330,7 @@ class HomePageState extends State<HomePage> {
       ),
     ]);
 
+    //Sliding Up panel
     if (isSlidingUpPanelVisible) {
       homePageBody = SlidingUpPanel(
           maxHeight: screenHeight - 150,
@@ -361,11 +369,12 @@ class HomePageState extends State<HomePage> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    controller: controller,
                     physics: const BouncingScrollPhysics(),
-                    child: Row(
-                      children: [
-                        Expanded(
+                    child: ValueListenableBuilder(
+                      valueListenable: DataController.instance.allExpenses,
+                      builder: (context, value, child) {
+                        return Container(
+                          margin: const EdgeInsets.only(left: 20, right: 20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -379,11 +388,20 @@ class HomePageState extends State<HomePage> {
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              ...generateTestExpensesWidgets()
-                            ],
+                              ...List.generate(
+                                  DataController.instance.allExpenses.value.length,
+                                      (index) {
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 10),
+                                      child: SlidingUpPanelItem(
+                                          model: DataController
+                                              .instance.allExpenses.value[index]),
+                                    );
+                                  }),
+                            ]
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -429,132 +447,5 @@ class HomePageState extends State<HomePage> {
     } else {
       panelController.open();
     }
-  }
-
-  List<Widget> generateTestExpensesWidgets() {
-    return List.generate(25, (index) {
-      return SlidingMenuItem(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        model: ExpenseModel(
-            title: 'Softuni',
-            total: 90,
-            category: ExpenseCategory.Education,
-            isRecurring: false,
-            date: DateTime(2024, 11)),
-      );
-    });
-  }
-
-  List<ExpenseModel> generateTestExpenses() {
-    return [
-      ExpenseModel(
-          title: 'Car Payment',
-          total: 90,
-          category: ExpenseCategory.Other,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'House Insurance',
-          total: 30,
-          category: ExpenseCategory.Housing,
-          isRecurring: true,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'Soft Uni',
-          total: 120,
-          category: ExpenseCategory.Education,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'Andrews suit',
-          total: 200,
-          category: ExpenseCategory.Clothing,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'Car Payment',
-          total: 120,
-          category: ExpenseCategory.Other,
-          isRecurring: false,
-          date: DateTime(2024, 10)),
-      ExpenseModel(
-          title: 'Medicine',
-          total: 250,
-          category: ExpenseCategory.Health,
-          isRecurring: false,
-          date: DateTime(2024, 10)),
-      ExpenseModel(
-          title: 'Housing',
-          total: 750,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 9)),
-      ExpenseModel(
-          title: 'Housing',
-          total: 150,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 8)),
-      ExpenseModel(
-          title: 'Housing',
-          total: 230,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 7)),
-      ExpenseModel(
-          title: 'Car Payment',
-          total: 90,
-          category: ExpenseCategory.Other,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'House Insurance',
-          total: 30,
-          category: ExpenseCategory.Housing,
-          isRecurring: true,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'Soft Uni',
-          total: 120,
-          category: ExpenseCategory.Education,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'Andrews suit',
-          total: 200,
-          category: ExpenseCategory.Clothing,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          title: 'Car Payment',
-          total: 120,
-          category: ExpenseCategory.Other,
-          isRecurring: false,
-          date: DateTime(2024, 10)),
-      ExpenseModel(
-          title: 'Medicine',
-          total: 250,
-          category: ExpenseCategory.Health,
-          isRecurring: false,
-          date: DateTime(2024, 10)),
-      ExpenseModel(
-          title: 'Housing',
-          total: 750,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 9)),
-      ExpenseModel(
-          title: 'Housing',
-          total: 150,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 8)),
-      ExpenseModel(
-          title: 'Housing',
-          total: 230,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 7)),
-    ];
   }
 }

@@ -66,7 +66,7 @@ class InsidesPageState extends State<InsidesPage> {
                     Expanded(
                       child: ValueListenableBuilder(
                         valueListenable:
-                            DataController.instance.expensesPerTypeNotifier,
+                            DataController.instance.expensesPerType,
                         builder: (context, value, child) {
                           List<PieChartDataEntity> dataSet = [];
                           if (value.isNotEmpty) {
@@ -107,7 +107,7 @@ class InsidesPageState extends State<InsidesPage> {
                     left: 20, top: 10, right: 20, bottom: 20),
                 child: ValueListenableBuilder(
                   valueListenable:
-                      DataController.instance.expensesPerTypeNotifier,
+                      DataController.instance.expensesPerType,
                   builder: (context, value, child) {
                     List<FlSpot> dataSet = [];
                     if (value.isNotEmpty) {

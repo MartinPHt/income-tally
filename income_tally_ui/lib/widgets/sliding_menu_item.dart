@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:income_tally/services/helpers.dart';
 import '../Models/expense_model.dart';
 
-class SlidingMenuItem extends StatelessWidget {
+class SlidingUpPanelItem extends StatelessWidget {
   final double height;
   final ExpenseModel model;
   final EdgeInsets? margin;
   final EdgeInsets? padding;
 
-  const SlidingMenuItem(
+  const SlidingUpPanelItem(
       {super.key,
       this.height = 50,
       required this.model,

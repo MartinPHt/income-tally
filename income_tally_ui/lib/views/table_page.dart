@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:income_tally/services/data_controller.dart';
+import 'package:income_tally/widgets/expense_table_item.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
 
 class TablePage extends StatefulWidget {
@@ -11,66 +13,46 @@ class TablePage extends StatefulWidget {
 class TablePageState extends State<TablePage> {
   @override
   Widget build(BuildContext context) {
-    return  Column(
+    return Row(
       children: [
-        RoundedContainer(
-          margin: const EdgeInsets.all(20),
-          padding: const EdgeInsets.all(20),
-          width: MediaQuery.of(context).size.width,
-          child: DataTable(
-            //columnSpacing: 20,
-            //headingRowHeight: 50,
-            //dataRowMinHeight: 40,
-            //border: TableBorder.all(color: Colors.grey.shade300), // Add border around the table
-            columns: _createColumns(),
-            rows: _createRows(),
+        Expanded(
+          child: Column(
+            children: [
+              Expanded(
+                child: RoundedContainer(
+                    margin: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: ValueListenableBuilder(
+                                valueListenable: DataController.instance.allExpenses,
+                                builder: (context, value, child) {
+                                  return Column(
+                                    children: List.generate(
+                                        DataController.instance.allExpenses.value.length,
+                                        (index) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(vertical: 10),
+                                        child: ExpenseTableItem(
+                                            model: DataController
+                                                .instance.allExpenses.value[index]),
+                                      );
+                                    }),
+                                  );
+                                }),
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ],
           ),
         ),
       ],
     );
-  }
-
-  List<DataColumn> _createColumns() {
-    return [
-      const DataColumn(label: Text('Column 1')),
-      const DataColumn(label: Text('Column 2')),
-      const DataColumn(label: Text('Column 3')),
-      const DataColumn(label: Text('Column 4')),
-    ];
-  }
-
-  List<DataRow> _createRows() {
-    return [
-      const DataRow(cells: [
-        DataCell(Text('Row 1, Col 1')),
-        DataCell(Text('Row 1, Col 2')),
-        DataCell(Text('Row 1, Col 3')),
-        DataCell(Text('Row 1, Col 4')),
-      ]),
-      const DataRow(cells: [
-        DataCell(Text('Row 2, Col 1')),
-        DataCell(Text('Row 2, Col 2')),
-        DataCell(Text('Row 2, Col 3')),
-        DataCell(Text('Row 2, Col 4')),
-      ]),
-      const DataRow(cells: [
-        DataCell(Text('Row 3, Col 1')),
-        DataCell(Text('Row 3, Col 2')),
-        DataCell(Text('Row 3, Col 3')),
-        DataCell(Text('Row 3, Col 4')),
-      ]),
-      const DataRow(cells: [
-        DataCell(Text('Row 4, Col 1')),
-        DataCell(Text('Row 4, Col 2')),
-        DataCell(Text('Row 4, Col 3')),
-        DataCell(Text('Row 4, Col 4')),
-      ]),
-      const DataRow(cells: [
-        DataCell(Text('Row 5, Col 1')),
-        DataCell(Text('Row 5, Col 2')),
-        DataCell(Text('Row 5, Col 3')),
-        DataCell(Text('Row 5, Col 4')),
-      ]),
-    ];
   }
 }

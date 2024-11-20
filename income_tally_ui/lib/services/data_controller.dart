@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:income_tally/Models/expense_model.dart';
 
 class DataController {
-  final ValueNotifier<Map<ExpenseCategory, double>> expensesPerTypeNotifier =
+  final ValueNotifier<Map<ExpenseCategory, double>> expensesPerType =
       ValueNotifier({});
-  final ValueNotifier<Map<double, double>> avgExpensesPerMonthNotifier =
+  final ValueNotifier<Map<double, double>> avgExpensesPerMonth =
       ValueNotifier({});
-
-  final List<ExpenseModel> loadedExpensesInHomeScreen = [];
+  final ValueNotifier<List<ExpenseModel>> allExpenses =
+      ValueNotifier([]);
 
   static final DataController instance = DataController._internal();
 
@@ -19,7 +19,7 @@ class DataController {
     //TODO: Initialize connection to the database
 
     //retrieved info (all records)
-    List<ExpenseModel> allExpenses = [
+    List<ExpenseModel> expenses = [
       ExpenseModel(
           title: 'Car Payment',
           total: 90,
@@ -76,49 +76,48 @@ class DataController {
           date: DateTime(2024, 7)),
     ];
 
+    allExpenses.value = expenses;
+
     DateTime dateTime = DateTime.now();
     var thisMonth = dateTime.month;
     var thisYear = dateTime.year;
 
-    List<ExpenseModel> filteredExpenses = allExpenses
+    List<ExpenseModel> filteredExpenses = expenses
         .where((expense) =>
             expense.date.year == thisYear && expense.date.month == thisMonth)
         .toList();
-    updateExpensesPerTypeNotifier(filteredExpenses);
+    updateExpensesPerType(filteredExpenses);
 
     filteredExpenses =
-        allExpenses.where((expense) => expense.date.year == thisYear).toList();
-    updateAvgExpensesPerMonthNotifier(filteredExpenses);
+        expenses.where((expense) => expense.date.year == thisYear).toList();
+    updateAvgExpensesPerMonth(filteredExpenses);
   }
 
-  void updateExpensesPerTypeNotifier(List<ExpenseModel> expenses) {
-    Map<ExpenseCategory, double> expensesPerType = {};
+  void updateExpensesPerType(List<ExpenseModel> expenses) {
+    Map<ExpenseCategory, double> map = {};
     for (var expense in expenses) {
       var key = expense.category;
-      if (expensesPerType.containsKey(key)) {
-        expensesPerType[key] = expensesPerType[key]! + expense.total;
+      if (map.containsKey(key)) {
+        map[key] = map[key]! + expense.total;
       } else {
-        expensesPerType[key] = expense.total;
+        map[key] = expense.total;
       }
     }
-    expensesPerTypeNotifier.value = expensesPerType;
+    expensesPerType.value = map;
   }
 
-  void updateAvgExpensesPerMonthNotifier(List<ExpenseModel> expenses) {
-    Map<double, double> avgExpensesPerMonth = {};
+  void updateAvgExpensesPerMonth(List<ExpenseModel> expenses) {
+    Map<double, double> map = {};
     try {
       for (var expense in expenses) {
         var key = expense.date.month.toDouble();
-        if (avgExpensesPerMonth.containsKey(key)) {
-          avgExpensesPerMonth[key] = avgExpensesPerMonth[key]! + expense.total;
+        if (map.containsKey(key)) {
+          map[key] = map[key]! + expense.total;
         } else {
-          avgExpensesPerMonth[key] = expense.total;
+          map[key] = expense.total;
         }
       }
-    }
-    catch (exception) {
-
-    }
-    avgExpensesPerMonthNotifier.value = avgExpensesPerMonth;
+    } catch (exception) {}
+    avgExpensesPerMonth.value = map;
   }
 }
