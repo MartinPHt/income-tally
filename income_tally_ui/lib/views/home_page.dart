@@ -96,11 +96,11 @@ class HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Expanded(
-                flex: 3,
+                flex: 4,
                 child: Column(
                   children: [
                     Expanded(
-                      flex: 6,
+                      flex: 7,
                       child: ListView(
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
@@ -110,7 +110,7 @@ class HomePageState extends State<HomePage> {
                               width: MediaQuery.of(context).size.width / 2,
                               height: double.infinity,
                               margin: const EdgeInsets.only(
-                                  left: 25, top: 25, right: 15, bottom: 15),
+                                  left: 25, top: 15, right: 15, bottom: 15),
                               constraints: const BoxConstraints(
                                   minWidth: 250, maxWidth: 365),
                               borderThickness: 0.01,
@@ -172,7 +172,7 @@ class HomePageState extends State<HomePage> {
                               width: MediaQuery.of(context).size.width / 2,
                               height: double.infinity,
                               margin: const EdgeInsets.only(
-                                  left: 15, top: 25, right: 25, bottom: 15),
+                                  left: 15, top: 15, right: 25, bottom: 15),
                               constraints: const BoxConstraints(
                                   minWidth: 250, maxWidth: 365),
                               child: TextButton(
@@ -275,7 +275,7 @@ class HomePageState extends State<HomePage> {
               Visibility(
                 visible: isRightExpenseListVisible,
                 child: Expanded(
-                  flex: 1,
+                  flex: 3,
                   child: RoundedContainer(
                     cornerRadius: 20,
                     margin: const EdgeInsets.only(
@@ -369,6 +369,7 @@ class HomePageState extends State<HomePage> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
+                    controller: controller,
                     physics: const BouncingScrollPhysics(),
                     child: ValueListenableBuilder(
                       valueListenable: DataController.instance.allExpenses,

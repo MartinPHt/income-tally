@@ -6,8 +6,7 @@ class DataController {
       ValueNotifier({});
   final ValueNotifier<Map<double, double>> avgExpensesPerMonth =
       ValueNotifier({});
-  final ValueNotifier<List<ExpenseModel>> allExpenses =
-      ValueNotifier([]);
+  final ValueNotifier<List<ExpenseModel>> allExpenses = ValueNotifier([]);
 
   static final DataController instance = DataController._internal();
 
@@ -119,5 +118,28 @@ class DataController {
       }
     } catch (exception) {}
     avgExpensesPerMonth.value = map;
+  }
+
+  bool performAddExpense(ExpenseModel expense) {
+    allExpenses.value.add(expense);
+    refreshExpenseNotifiers();
+    return true;
+  }
+
+  void refreshExpenseNotifiers() {
+    DateTime dateTime = DateTime.now();
+    var thisMonth = dateTime.month;
+    var thisYear = dateTime.year;
+
+    List<ExpenseModel> filteredExpenses = allExpenses.value
+        .where((expense) =>
+            expense.date.year == thisYear && expense.date.month == thisMonth)
+        .toList();
+    updateExpensesPerType(filteredExpenses);
+
+    filteredExpenses = allExpenses.value
+        .where((expense) => expense.date.year == thisYear)
+        .toList();
+    updateAvgExpensesPerMonth(filteredExpenses);
   }
 }
