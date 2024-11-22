@@ -109,11 +109,15 @@ abstract class DialogHelper {
       {required ExpenseModel expense}) {
     showModalBottomSheet(
         context: context,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
+        backgroundColor: Colors.transparent,
         builder: (context) {
-          return Padding(
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Theme.of(context).canvasColor,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -136,9 +140,7 @@ abstract class DialogHelper {
                         )),
                   ),
                 ]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   IconGenerator.generateExpenseIcon(expense.category),
                   const SizedBox(
                     width: 10,
@@ -152,18 +154,23 @@ abstract class DialogHelper {
                   ),
                 ]),
                 const SizedBox(height: 15),
-                Text('${expense.total} BGN',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  '${expense.total} BGN',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Text('${expense.date.month}/${expense.date.year}',
+                Text(
+                  '${expense.date.month}/${expense.date.year}',
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 15),
-                Text('Category: ${expense.category.name}',
+                Text(
+                  'Category: ${expense.category.name}',
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 5),
-                Text(expense.isRecurring ? 'Recurring' : 'Not recurring',
+                Text(
+                  expense.isRecurring ? 'Recurring' : 'Not recurring',
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 20),
