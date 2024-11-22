@@ -115,7 +115,7 @@ abstract class DialogHelper {
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Theme.of(context).canvasColor,
             ),
             child: Column(
@@ -199,7 +199,7 @@ abstract class DialogHelper {
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   IconButton(
                     style:
-                    TextButton.styleFrom(overlayColor: Colors.transparent),
+                        TextButton.styleFrom(overlayColor: Colors.transparent),
                     onPressed: () => Navigator.pop(context),
                     icon: Container(
                         decoration: BoxDecoration(
@@ -248,11 +248,64 @@ abstract class DialogHelper {
                   expense.isRecurring ? 'Recurring' : 'Not recurring',
                   style: const TextStyle(fontSize: 14),
                 ),
+                const SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: TextButton(
+                        onPressed: ()
+                        {
+                          Navigator.pushNamed(
+                              context, "/add_expense");
+                        },
+                        style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xff9d6fed),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        child: const Icon(
+                          Icons.edit_outlined,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: TextButton(
+                        onPressed: () {
+                          DialogHelper.showConfirmationDialog("Are you sure you want to delete '${expense.title}' expense", onConfirmed: () {
+                            //perform delete of the expenseModel from the database
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xfff14646),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        child: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
               ],
             ),
           );
         });
+  }
+
+  static void showConfirmationDialog(String title, {required Function() onConfirmed} ) {
+    //TODO: Implement confirmation dialog functionality
   }
 }
 
