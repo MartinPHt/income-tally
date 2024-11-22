@@ -179,6 +179,81 @@ abstract class DialogHelper {
           );
         });
   }
+
+  static void showExpenseEditActions(BuildContext context,
+      {required ExpenseModel expense}) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Theme.of(context).canvasColor,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  IconButton(
+                    style:
+                    TextButton.styleFrom(overlayColor: Colors.transparent),
+                    onPressed: () => Navigator.pop(context),
+                    icon: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        width: 25,
+                        height: 25,
+                        child: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: Theme.of(context).hintColor,
+                        )),
+                  ),
+                ]),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  IconGenerator.generateExpenseIcon(expense.category),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    expense.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 15),
+                Text(
+                  '${expense.total} BGN',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '${expense.date.month}/${expense.date.year}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  'Category: ${expense.category.name}',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  expense.isRecurring ? 'Recurring' : 'Not recurring',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          );
+        });
+  }
 }
 
 abstract class StringFormatter {

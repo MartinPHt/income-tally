@@ -40,23 +40,26 @@ class MainViewState extends State<MainView> {
 
   Widget _generateSideNavButton(String unselectedImagePath,
       String selectedImagePath, Widget label, int index) {
-    return FilledButton(
-      onPressed: () {
-        _onItemTapped(index);
-      },
-      style: FilledButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          backgroundColor: Theme.of(context).canvasColor,
-          overlayColor: Colors.deepPurple[300],
-          surfaceTintColor: Colors.deepPurple[100],
-          foregroundColor: Colors.grey[700]),
-      child: Center(
-        child: Row(
-          children: [
-            _buildTabIconFromImages(
-                unselectedImagePath, selectedImagePath, index),
-            label
-          ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: FilledButton(
+        onPressed: () {
+          _onItemTapped(index);
+        },
+        style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            backgroundColor: Theme.of(context).canvasColor,
+            overlayColor: Colors.deepPurple[300],
+            surfaceTintColor: Colors.deepPurple[100],
+            foregroundColor: Colors.grey[700]),
+        child: Center(
+          child: Row(
+            children: [
+              _buildTabIconFromImages(
+                  unselectedImagePath, selectedImagePath, index),
+              label
+            ],
+          ),
         ),
       ),
     );
@@ -76,45 +79,52 @@ class MainViewState extends State<MainView> {
       child: Scaffold(
         body: Row(
           children: [
+            // Left Side Navigation Bar (shown only on desktop)
             Visibility(
               visible: sideMenuVisible,
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.20,
                 constraints: const BoxConstraints(maxWidth: 300),
                 color: Theme.of(context).canvasColor,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 30),
-                    Center(
-                      child: SizedBox(
-                        height: 120,
-                        width: MediaQuery.of(context).size.width,
-                        child: Image.asset('lib/icons/logo.png'),
+                child: Stack(children: [
+                  Column(
+                    children: [
+                      const SizedBox(height: 30),
+                      Center(
+                        child: SizedBox(
+                          height: 120,
+                          width: MediaQuery.of(context).size.width,
+                          child: Image.asset('lib/icons/logo.png'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 30),
-                    Container(
-                      margin: const EdgeInsets.only(left: 25, right: 25),
-                      height: 2,
-                      color: Colors.grey[300],
-                    ),
-                    const SizedBox(height: 15),
-                    _generateSideNavButton('lib/icons/house.png',
-                        'lib/icons/houseSelected.png', const Text('Home'), 0),
-                    const SizedBox(height: 5),
-                    _generateSideNavButton(
-                        'lib/icons/chart.png',
-                        'lib/icons/chartSelected.png',
-                        const Text('Insights'),
-                        1),
-                    const SizedBox(height: 5),
-                    _generateSideNavButton(
-                        'lib/icons/settings.png',
-                        'lib/icons/settingsSelected.png',
-                        const Text('Home'),
-                        2),
-                  ],
-                ),
+                      const SizedBox(height: 30),
+                      Container(
+                        margin: const EdgeInsets.only(left: 25, right: 25),
+                        height: 2,
+                        color: Colors.grey[300],
+                      ),
+                      const SizedBox(height: 15),
+                      _generateSideNavButton('lib/icons/house.png',
+                          'lib/icons/houseSelected.png', const Text('Home'), 0),
+                      const SizedBox(height: 5),
+                      _generateSideNavButton(
+                          'lib/icons/chart.png',
+                          'lib/icons/chartSelected.png',
+                          const Text('Insights'),
+                          1),
+                      const SizedBox(height: 5),
+                      _generateSideNavButton(
+                          'lib/icons/settings.png',
+                          'lib/icons/settingsSelected.png',
+                          const Text('Home'),
+                          2),
+                    ],
+                  ),
+                  const Positioned(
+                      left: 10,
+                      bottom: 10,
+                      child: Text('Copyright © 2024 Martin P.', style: TextStyle(fontSize: 12),))
+                ]),
               ),
             ),
             Expanded(
@@ -157,7 +167,8 @@ class MainViewState extends State<MainView> {
               ),
             ),
           ],
-        ), // Displays the selected page
+        ),
+        // Bottom Navigation Bar
         bottomNavigationBar: Visibility(
           visible: bottomNavBarVisible,
           child: BottomNavigationBar(
