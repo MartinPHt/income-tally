@@ -18,7 +18,6 @@ class AddExpenseViewState extends State<AddExpenseView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isHandlingInput = false;
   bool isRecurring = false;
-  String selectedExpenseType = "";
   List<String> expenseTypes = [
     'Housing',
     'Food',
@@ -29,6 +28,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
     'Clothing',
     'Other'
   ];
+
+  String selectedExpenseCategory = ExpenseCategory.Other.name;
 
   @override
   void dispose() {
@@ -241,22 +242,43 @@ class AddExpenseViewState extends State<AddExpenseView> {
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
+                      // Container(
+                      //   margin: const EdgeInsets.only(bottom: 10),
+                      //   child: DropdownMenu<String>(
+                      //     width: widgetsMaxWidth,
+                      //     inputDecorationTheme: const InputDecorationTheme(
+                      //         isDense: true, border: OutlineInputBorder()),
+                      //     initialSelection: selectedExpenseCategory.isNotEmpty
+                      //         ? selectedExpenseCategory
+                      //         : expenseTypes.first,
+                      //     onSelected: (String? value) {},
+                      //     dropdownMenuEntries: expenseTypes.map((value) {
+                      //       return DropdownMenuEntry(
+                      //           value: value, label: value);
+                      //     }).toList(),
+                      //   ),
+                      // ),
                       Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        child: DropdownMenu<String>(
-                          width: widgetsMaxWidth,
-                          inputDecorationTheme: const InputDecorationTheme(
-                              isDense: true, border: OutlineInputBorder()),
-                          initialSelection: selectedExpenseType.isNotEmpty
-                              ? selectedExpenseType
-                              : expenseTypes.first,
-                          onSelected: (String? value) {},
-                          dropdownMenuEntries: expenseTypes.map((value) {
-                            return DropdownMenuEntry(
-                                value: value, label: value);
-                          }).toList(),
-                        ),
-                      ),
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: SizedBox(
+                              width: widgetsMaxWidth,
+                              child: DropdownButtonFormField(
+                                value: selectedExpenseCategory,
+                                borderRadius: BorderRadius.circular(5),
+                                focusColor: Colors.transparent,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                ),
+                                items: expenseTypes.map((value) {
+                                  return DropdownMenuItem(
+                                      value: value, child: Text(value));
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedExpenseCategory = value ?? ExpenseCategory.Other.name;
+                                  });
+                                },
+                              ))),
                       Container(
                         margin: const EdgeInsets.only(top: 20, bottom: 10),
                         child: const Text("Date",
@@ -398,7 +420,7 @@ class AddExpenseViewState extends State<AddExpenseView> {
         title: titleController.text,
         total: double.parse(totalController.text),
         category: ExpenseCategory.values.firstWhere(
-            (e) => e.toString() == selectedExpenseType,
+            (e) => e.name == selectedExpenseCategory,
             orElse: () => ExpenseCategory.Other),
         isRecurring: isRecurring,
         date: DateTime(year, month));

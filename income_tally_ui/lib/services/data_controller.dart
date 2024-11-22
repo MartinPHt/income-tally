@@ -109,7 +109,7 @@ class DataController {
     Map<double, double> map = {};
     try {
       for (var expense in expenses) {
-        var key = expense.date.month.toDouble();
+        var key = expense.date.month.toDouble() - 1;
         if (map.containsKey(key)) {
           map[key] = map[key]! + expense.total;
         } else {
@@ -140,6 +140,7 @@ class DataController {
     filteredExpenses = allExpenses.value
         .where((expense) => expense.date.year == thisYear)
         .toList();
+    filteredExpenses.sort((a, b) => a.date.month.compareTo(b.date.month));
     updateAvgExpensesPerMonth(filteredExpenses);
   }
 }

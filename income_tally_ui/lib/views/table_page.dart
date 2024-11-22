@@ -21,29 +21,32 @@ class TablePageState extends State<TablePage> {
               Expanded(
                 child: RoundedContainer(
                     margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.all(20),
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       children: [
                         Expanded(
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: ValueListenableBuilder(
-                                valueListenable: DataController.instance.allExpenses,
-                                builder: (context, value, child) {
-                                  return Column(
-                                    children: List.generate(
-                                        DataController.instance.allExpenses.value.length,
-                                        (index) {
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(vertical: 10),
-                                        child: ExpenseTableItem(
-                                            model: DataController
-                                                .instance.allExpenses.value[index]),
-                                      );
-                                    }),
-                                  );
-                                }),
+                          child: Container(
+                            margin: const EdgeInsets.all(10),
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.all(10),
+                              physics: const BouncingScrollPhysics(),
+                              child: ValueListenableBuilder(
+                                  valueListenable: DataController.instance.allExpenses,
+                                  builder: (context, value, child) {
+                                    return Column(
+                                      children: List.generate(
+                                          DataController.instance.allExpenses.value.length,
+                                          (index) {
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(vertical: 10),
+                                          child: ExpenseTableItem(
+                                              model: DataController
+                                                  .instance.allExpenses.value[index]),
+                                        );
+                                      }),
+                                    );
+                                  }),
+                            ),
                           ),
                         ),
                       ],
