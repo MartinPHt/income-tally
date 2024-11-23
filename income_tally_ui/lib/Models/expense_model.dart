@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ExpenseModel {
+  final int id;
   final String title;
   final double total;
   final ExpenseCategory category;
@@ -8,7 +9,8 @@ class ExpenseModel {
   final DateTime date;
 
   ExpenseModel(
-      {required this.title,
+      {required this.id,
+      required this.title,
       required this.total,
       required this.category,
       required this.isRecurring,

@@ -178,7 +178,7 @@ class HomePageState extends State<HomePage> {
                               child: TextButton(
                                   onPressed: () {
                                     Navigator.pushNamed(
-                                        context, "/add_expense");
+                                        context, "/add_edit_expense");
                                   },
                                   style: TextButton.styleFrom(
                                       overlayColor: Colors.transparent),

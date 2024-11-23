@@ -182,6 +182,7 @@ abstract class DialogHelper {
 
   static void showExpenseEditActions(BuildContext context,
       {required ExpenseModel expense}) {
+    //TODO: this breaks if screen height is tight. Fix this
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -256,10 +257,9 @@ abstract class DialogHelper {
                       width: 60,
                       height: 60,
                       child: TextButton(
-                        onPressed: ()
-                        {
-                          Navigator.pushNamed(
-                              context, "/add_expense");
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/add_edit_expense",
+                              arguments: expense);
                         },
                         style: TextButton.styleFrom(
                             backgroundColor: const Color(0xff9d6fed),
@@ -280,7 +280,9 @@ abstract class DialogHelper {
                       height: 60,
                       child: TextButton(
                         onPressed: () {
-                          DialogHelper.showConfirmationDialog("Are you sure you want to delete '${expense.title}' expense", onConfirmed: () {
+                          DialogHelper.showConfirmationDialog(
+                              "Are you sure you want to delete '${expense.title}' expense",
+                              onConfirmed: () {
                             //perform delete of the expenseModel from the database
                           });
                         },
@@ -304,7 +306,8 @@ abstract class DialogHelper {
         });
   }
 
-  static void showConfirmationDialog(String title, {required Function() onConfirmed} ) {
+  static void showConfirmationDialog(String title,
+      {required Function() onConfirmed}) {
     //TODO: Implement confirmation dialog functionality
   }
 }

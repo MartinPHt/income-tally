@@ -12,11 +12,14 @@ class AddExpenseView extends StatefulWidget {
 }
 
 class AddExpenseViewState extends State<AddExpenseView> {
+  //used for validation
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  //input controllers and fields storing data
   TextEditingController titleController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   TextEditingController dateController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isHandlingInput = false;
+  String selectedExpenseCategory = ExpenseCategory.Other.name;
   bool isRecurring = false;
   List<String> expenseTypes = [
     'Housing',
@@ -28,8 +31,11 @@ class AddExpenseViewState extends State<AddExpenseView> {
     'Clothing',
     'Other'
   ];
+  bool isHandlingInput = false;
 
-  String selectedExpenseCategory = ExpenseCategory.Other.name;
+  //used only if user edits already existing expense
+  ExpenseModel? passedModel;
+  bool modelLoaded = false;
 
   @override
   void dispose() {
@@ -108,6 +114,21 @@ class AddExpenseViewState extends State<AddExpenseView> {
 
   @override
   Widget build(BuildContext context) {
+    //get arguments
+    if (!modelLoaded) {
+      var arguments = ModalRoute.of(context)?.settings.arguments;
+      passedModel = arguments as ExpenseModel?;
+      if (passedModel != null) {
+        titleController.text = passedModel!.title;
+        totalController.text = passedModel!.total.toString();
+        dateController.text =
+            "${passedModel!.date.month}/${passedModel!.date.year}";
+        selectedExpenseCategory = passedModel!.category.name;
+        isRecurring = passedModel!.isRecurring;
+      }
+      modelLoaded = true;
+    }
+
     double startHeight = MediaQuery.of(context).size.height / 10;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -190,8 +211,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
                       SizedBox(
                         height: startHeight,
                       ),
-                      const Text("New expense",
-                          style: TextStyle(
+                      Text(passedModel == null ? "New expense" : "Edit expense",
+                          style: const TextStyle(
                               fontSize: 32, fontWeight: FontWeight.bold)),
                       const Text("Please fill out all fields",
                           style: TextStyle(
@@ -275,7 +296,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
                                 }).toList(),
                                 onChanged: (value) {
                                   setState(() {
-                                    selectedExpenseCategory = value ?? ExpenseCategory.Other.name;
+                                    selectedExpenseCategory =
+                                        value ?? ExpenseCategory.Other.name;
                                   });
                                 },
                               ))),
@@ -336,10 +358,15 @@ class AddExpenseViewState extends State<AddExpenseView> {
                             child: FilledButton(
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    doAddNewExpense(context);
-                                  } else {}
+                                    if (passedModel == null) {
+                                      doAddNewExpense(context);
+                                    } else {
+                                      doEditNewExpense(context);
+                                    }
+                                  }
                                 },
-                                child: const Text('Add')),
+                                child:
+                                    Text(passedModel == null ? 'Add' : 'Save')),
                           ),
                           Visibility(
                             visible: isCancelButtonVisible,
@@ -417,6 +444,31 @@ class AddExpenseViewState extends State<AddExpenseView> {
     int month = int.parse(dateParts[0]);
     int year = int.parse(dateParts[1]);
     var expense = ExpenseModel(
+        id: -1,
+        title: titleController.text,
+        total: double.parse(totalController.text),
+        category: ExpenseCategory.values.firstWhere(
+            (e) => e.name == selectedExpenseCategory,
+            orElse: () => ExpenseCategory.Other),
+        isRecurring: isRecurring,
+        date: DateTime(year, month));
+
+    var result = DataController.instance.performAddExpense(expense);
+    if (result) {
+      showDialogWithAutoClose(context, isSuccessful: true, func: () {
+        Navigator.pop(context);
+      });
+    } else {
+      //
+    }
+  }
+
+  void doEditNewExpense(BuildContext context) {
+    var dateParts = dateController.text.split('/');
+    int month = int.parse(dateParts[0]);
+    int year = int.parse(dateParts[1]);
+    var expense = ExpenseModel(
+        id: passedModel!.id,
         title: titleController.text,
         total: double.parse(totalController.text),
         category: ExpenseCategory.values.firstWhere(
@@ -436,8 +488,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
   }
 
   // Function to show a dialog and close it after 2 seconds
-  Future showDialogWithAutoClose(BuildContext context, {required bool isSuccessful,
-      required Function() func}) async {
+  Future showDialogWithAutoClose(BuildContext context,
+      {required bool isSuccessful, required Function() func}) async {
     bool isClosed = false;
 
     await showDialog(
@@ -468,8 +520,14 @@ class AddExpenseViewState extends State<AddExpenseView> {
                       width: 80,
                       height: 80,
                     ),
-                    const SizedBox(height: 10,),
-                    Text(isSuccessful ? "Successful" : "Error", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      isSuccessful ? "Successful" : "Error",
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    )
                   ],
                 )),
           ),

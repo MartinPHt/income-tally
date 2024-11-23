@@ -20,54 +20,63 @@ class DataController {
     //retrieved info (all records)
     List<ExpenseModel> expenses = [
       ExpenseModel(
+          id: 1,
           title: 'Car Payment',
           total: 90,
           category: ExpenseCategory.Other,
           isRecurring: false,
           date: DateTime(2024, 11)),
       ExpenseModel(
+          id: 2,
           title: 'House Insurance',
           total: 30,
           category: ExpenseCategory.Housing,
           isRecurring: true,
           date: DateTime(2024, 11)),
       ExpenseModel(
+          id: 3,
           title: 'Soft Uni',
           total: 120,
           category: ExpenseCategory.Education,
           isRecurring: false,
           date: DateTime(2024, 11)),
       ExpenseModel(
+          id: 4,
           title: 'Andrews suit',
           total: 200,
           category: ExpenseCategory.Clothing,
           isRecurring: false,
           date: DateTime(2024, 11)),
       ExpenseModel(
+          id: 5,
           title: 'Car Payment',
           total: 120,
           category: ExpenseCategory.Other,
           isRecurring: false,
           date: DateTime(2024, 10)),
       ExpenseModel(
+          id: 6,
           title: 'Medicine',
           total: 250,
           category: ExpenseCategory.Health,
           isRecurring: false,
           date: DateTime(2024, 10)),
       ExpenseModel(
+          id: 7,
           title: 'Housing',
           total: 750,
           category: ExpenseCategory.Housing,
           isRecurring: false,
           date: DateTime(2024, 9)),
       ExpenseModel(
+          id: 8,
           title: 'Housing',
           total: 150,
           category: ExpenseCategory.Housing,
           isRecurring: false,
           date: DateTime(2024, 8)),
       ExpenseModel(
+          id: 9,
           title: 'Housing',
           total: 230,
           category: ExpenseCategory.Housing,
