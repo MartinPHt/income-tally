@@ -280,10 +280,12 @@ abstract class DialogHelper {
                       height: 60,
                       child: TextButton(
                         onPressed: () {
-                          DialogHelper.showConfirmationDialog(
-                              "Are you sure you want to delete '${expense.title}' expense",
+                          DialogHelper.showConfirmationDialog(context,
+                              title:
+                                  "Are you sure you want to delete '${expense.title}' expense",
                               onConfirmed: () {
-                            //perform delete of the expenseModel from the database
+                            //close the showExpenseEditActions dialog
+                            Navigator.pop(context);
                           });
                         },
                         style: TextButton.styleFrom(
@@ -306,9 +308,45 @@ abstract class DialogHelper {
         });
   }
 
-  static void showConfirmationDialog(String title,
-      {required Function() onConfirmed}) {
-    //TODO: Implement confirmation dialog functionality
+  static void showConfirmationDialog(BuildContext context,
+      {required String title,
+      Function()? onConfirmed,
+      Function()? onCanceled,
+      String confirmTitle = "Yes",
+      String cancelTitle = "No"}) async {
+    bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            "Confirmation",
+            style: TextStyle(fontSize: 18),
+          ),
+          content: Text("$title?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text(confirmTitle),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text(cancelTitle),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Handle the result
+    if (confirmed == true && onConfirmed != null) {
+      onConfirmed();
+    } else if (confirmed == false && onCanceled != null) {
+      onCanceled();
+    }
   }
 }
 

@@ -456,10 +456,11 @@ class AddExpenseViewState extends State<AddExpenseView> {
     var result = DataController.instance.performAddExpense(expense);
     if (result) {
       showDialogWithAutoClose(context, isSuccessful: true, func: () {
+        // go back to previous page
         Navigator.pop(context);
       });
     } else {
-      //
+
     }
   }
 
@@ -480,10 +481,11 @@ class AddExpenseViewState extends State<AddExpenseView> {
     var result = DataController.instance.performAddExpense(expense);
     if (result) {
       showDialogWithAutoClose(context, isSuccessful: true, func: () {
+        // go back to previous page
         Navigator.pop(context);
       });
     } else {
-      //
+
     }
   }
 
@@ -516,7 +518,7 @@ class AddExpenseViewState extends State<AddExpenseView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      "lib/icons/successIcon.png",
+                      isSuccessful ? "lib/icons/successIcon.png" : "lib/icons/errorIcon.png",
                       width: 80,
                       height: 80,
                     ),
