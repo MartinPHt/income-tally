@@ -35,8 +35,59 @@ class _CustomPieChartState extends State<CustomPieChart> {
         selectedLegendMarkerBottomDistance = 10;
       }
 
+      Widget legendView = Container(
+        margin: const EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 0),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: IntrinsicWidth(
+            child: Column(
+              children: List.generate(widget.dataSet.length, (i) {
+                var dataEntity = widget.dataSet[i];
+                bool isSelected = i == pieChartTouchedIndex;
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: dataEntity.color),
+                          width: isSelected
+                              ? selectedLegendMarkerSize
+                              : legendMarkerSize,
+                          height: isSelected
+                              ? selectedLegendMarkerSize
+                              : legendMarkerSize,
+                        ),
+                        SizedBox(
+                          width: isSelected
+                              ? selectedLegendMarkerBottomDistance
+                              : legendMarkerBottomDistance,
+                        ),
+                        Expanded(
+                            child: Text(
+                          dataEntity.legendHeader,
+                          style: TextStyle(
+                              fontSize: legendTitleFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[600]),
+                        ))
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    )
+                  ],
+                );
+              }),
+            ),
+          ),
+        ),
+      );
+
       List<Widget> widgetTree = [
         Expanded(
+          flex: isPortrait ? 3 : 1,
           child: Container(
             margin: internalChartMargin,
             child: PieChart(
@@ -79,55 +130,13 @@ class _CustomPieChartState extends State<CustomPieChart> {
             ),
           ),
         ),
-        IntrinsicHeight(
-          child: IntrinsicWidth(
-            child: Container(
-              margin: const EdgeInsets.only(
-                  left: 15, top: 15, right: 15, bottom: 0),
-              child: Column(
-                children: List.generate(widget.dataSet.length, (i) {
-                  var dataEntity = widget.dataSet[i];
-                  bool isSelected = i == pieChartTouchedIndex;
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                color: dataEntity.color),
-                            width: isSelected
-                                ? selectedLegendMarkerSize
-                                : legendMarkerSize,
-                            height: isSelected
-                                ? selectedLegendMarkerSize
-                                : legendMarkerSize,
-                          ),
-                          SizedBox(
-                            width: isSelected
-                                ? selectedLegendMarkerBottomDistance
-                                : legendMarkerBottomDistance,
-                          ),
-                          Expanded(
-                              child: Text(
-                            dataEntity.legendHeader,
-                            style: TextStyle(
-                                fontSize: legendTitleFontSize,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[600]),
-                          ))
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      )
-                    ],
-                  );
-                }),
-              ),
-            ),
-          ),
-        )
+        isPortrait
+            ? Expanded(flex: 1, child: legendView)
+            : IntrinsicHeight(
+                child: IntrinsicWidth(
+                  child: legendView,
+                ),
+              )
       ];
 
       return isPortrait

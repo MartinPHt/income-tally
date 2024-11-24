@@ -81,7 +81,21 @@ class DataController {
           total: 230,
           category: ExpenseCategory.Housing,
           isRecurring: false,
-          date: DateTime(2024, 7)),
+          date: DateTime(2024, 11)),
+      ExpenseModel(
+          id: 10,
+          title: 'Transportation',
+          total: 230,
+          category: ExpenseCategory.Transportation,
+          isRecurring: false,
+          date: DateTime(2024, 11)),
+      ExpenseModel(
+          id: 11,
+          title: 'KFC',
+          total: 230,
+          category: ExpenseCategory.Food,
+          isRecurring: false,
+          date: DateTime(2024, 11)),
     ];
 
     allExpenses.value = expenses;
