@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -353,5 +354,27 @@ abstract class DialogHelper {
 abstract class StringFormatter {
   static String formatDateToDMY(DateTime dateTime) {
     return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}';
+  }
+}
+
+abstract class JsonSerialize {
+  // Deserialize JSON to object
+  static T deserialize<T>(String responseBody) {
+    try {
+      return jsonDecode(responseBody) as T;
+    } catch (e) {
+      throw FormatException(
+          'JSON: Error deserializing the response body to ${T.runtimeType.toString()}. Exception body: $e');
+    }
+  }
+
+  // Deserialize JSON to object
+  static String serialize<T>(T object) {
+    try {
+      return jsonEncode(object);
+    } catch (e) {
+      throw FormatException(
+          'JSON: Error serializing the ${T.runtimeType.toString()} object. Exception body: $e');
+    }
   }
 }
