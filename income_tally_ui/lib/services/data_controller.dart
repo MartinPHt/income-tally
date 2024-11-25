@@ -54,7 +54,7 @@ class DataController {
           .toList();
 
       allExpenses.value = convertResponseToExpenses(expenseList);
-      allExpensesState.value = DataState.success;
+      allExpensesState.value = DataState.loaded;
 
       //Filters. Can be passed later on
       DateTime dateTime = DateTime.now();
@@ -69,7 +69,7 @@ class DataController {
                 expense.date.month == thisMonth)
             .toList();
         updateExpensesPerType(filteredExpenses);
-        expPerTypeState.value = DataState.success;
+        expPerTypeState.value = DataState.loaded;
       }
 
       if (fetchExpPerType) {
@@ -80,9 +80,9 @@ class DataController {
         updateAverageExpenses(filteredExpenses);
       }
     } catch (e) {
-      allExpensesState.value = DataState.error;
-      expPerTypeState.value = DataState.error;
-      monthlyExpensesState.value = DataState.error;
+      allExpensesState.value = DataState.failure;
+      expPerTypeState.value = DataState.failure;
+      monthlyExpensesState.value = DataState.failure;
     }
   }
 
@@ -142,4 +142,4 @@ class DataController {
   }
 }
 
-enum DataState { loading, success, error }
+enum DataState { loading, loaded, failure }

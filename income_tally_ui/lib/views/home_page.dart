@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
+import 'package:income_tally/widgets/shimmer_loading_list.dart';
 import 'package:income_tally/widgets/sliding_menu_item.dart';
+import 'package:income_tally/widgets/state_aware_widget.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../widgets/line_chart.dart';
@@ -244,8 +246,8 @@ class HomePageState extends State<HomePage> {
                                     const BoxConstraints(maxWidth: 730),
                                 alignment: Alignment.topLeft,
                                 child: ValueListenableBuilder(
-                                  valueListenable: DataController
-                                      .instance.monthlyExpenses,
+                                  valueListenable:
+                                      DataController.instance.monthlyExpenses,
                                   builder: (context, value, child) {
                                     List<FlSpot> dataSet = [];
                                     if (value.isNotEmpty) {
@@ -297,21 +299,24 @@ class HomePageState extends State<HomePage> {
                           child: SingleChildScrollView(
                             physics: const BouncingScrollPhysics(),
                             child: ValueListenableBuilder(
-                              valueListenable: DataController.instance.allExpenses,
+                              valueListenable:
+                                  DataController.instance.allExpenses,
                               builder: (context, value, child) {
                                 return Container(
-                                  margin: const EdgeInsets.only(left: 20, right: 20),
+                                  margin: const EdgeInsets.only(
+                                      left: 20, right: 20),
                                   child: Column(
                                     children: List.generate(
-                                        DataController.instance.allExpenses.value.length,
-                                            (index) {
-                                          return Container(
-                                            margin: const EdgeInsets.symmetric(vertical: 10),
-                                            child: SlidingUpPanelItem(
-                                                model: DataController
-                                                    .instance.allExpenses.value[index]),
-                                          );
-                                        }),
+                                        DataController.instance.allExpenses
+                                            .value.length, (index) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        child: SlidingUpPanelItem(
+                                            model: DataController.instance
+                                                .allExpenses.value[index]),
+                                      );
+                                    }),
                                   ),
                                 );
                               },
@@ -376,30 +381,59 @@ class HomePageState extends State<HomePage> {
                         return Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(
-                                    left: 20, top: 5, bottom: 5),
-                                child: const Text(
-                                  'Expenses',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                      left: 20, top: 5, bottom: 5),
+                                  child: const Text(
+                                    'Expenses',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                              ...List.generate(
-                                  DataController.instance.allExpenses.value.length,
-                                      (index) {
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 10),
-                                      child: SlidingUpPanelItem(
-                                          model: DataController
-                                              .instance.allExpenses.value[index]),
-                                    );
-                                  }),
-                            ]
-                          ),
+                                StateAwareWidget(
+                                  notifier: DataController.instance.allExpensesState,
+                                  onErrorWidget: Column(children: [
+                                    const SizedBox(height: 20,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(constraints: const BoxConstraints(maxHeight: 120, maxWidth: 120), child: Image.asset('lib/icons/unplugedIcon.png'),)
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20,),
+                                    const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text('Something went wrong', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text('An error ocurred while loading yor expenses', style: TextStyle(fontSize: 18))
+                                      ],
+                                    ),
+                                  ],),
+                                  onLoadingWidget: const ShimmerLoadingList(length: 10,),
+                                  successWidget: Column(
+                                    children: List.generate(
+                                        DataController.instance.allExpenses.value
+                                            .length, (index) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        child: SlidingUpPanelItem(
+                                            model: DataController.instance
+                                                .allExpenses.value[index]),
+                                      );
+                                    }),
+                                  ),
+                                )
+                              ]),
                         );
                       },
                     ),
