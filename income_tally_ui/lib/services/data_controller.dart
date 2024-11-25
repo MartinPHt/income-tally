@@ -1,12 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:income_tally/Models/expense_model.dart';
+import 'package:income_tally/Models/request_model.dart';
+import 'package:income_tally/Models/response_model.dart';
+import 'package:income_tally/services/http_service.dart';
 
 class DataController {
-  final ValueNotifier<Map<ExpenseCategory, double>> expensesPerType =
+  //expenses per type notifiers
+  final ValueNotifier<DataState> expPerTypeState =
+      ValueNotifier(DataState.loading);
+  final ValueNotifier<Map<ExpenseCategory, double>> expPerType =
       ValueNotifier({});
-  final ValueNotifier<Map<double, double>> avgExpensesPerMonth =
-      ValueNotifier({});
+
+  //average expenses per month notifiers
+  final ValueNotifier<DataState> monthlyExpensesState =
+      ValueNotifier(DataState.loading);
+  final ValueNotifier<Map<double, double>> monthlyExpenses = ValueNotifier({});
+
+  //all expenses notifiers
+  final ValueNotifier<DataState> allExpensesState =
+      ValueNotifier(DataState.loading);
   final ValueNotifier<List<ExpenseModel>> allExpenses = ValueNotifier([]);
+
+  final ValueNotifier<String?> serverError = ValueNotifier(null);
 
   static final DataController instance = DataController._internal();
 
@@ -14,105 +29,103 @@ class DataController {
     return instance;
   }
 
-  DataController._internal() {
-    //TODO: Initialize connection to the database
+  DataController._internal();
 
-    //retrieved info (all records)
-    List<ExpenseModel> expenses = [
-      ExpenseModel(
-          id: 1,
-          title: 'Car Payment',
-          total: 90,
-          category: ExpenseCategory.Other,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          id: 2,
-          title: 'House Insurance',
-          total: 30,
-          category: ExpenseCategory.Housing,
-          isRecurring: true,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          id: 3,
-          title: 'Soft Uni',
-          total: 120,
-          category: ExpenseCategory.Education,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          id: 4,
-          title: 'Andrews suit',
-          total: 200,
-          category: ExpenseCategory.Clothing,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          id: 5,
-          title: 'Car Payment',
-          total: 120,
-          category: ExpenseCategory.Other,
-          isRecurring: false,
-          date: DateTime(2024, 10)),
-      ExpenseModel(
-          id: 6,
-          title: 'Medicine',
-          total: 250,
-          category: ExpenseCategory.Health,
-          isRecurring: false,
-          date: DateTime(2024, 10)),
-      ExpenseModel(
-          id: 7,
-          title: 'Housing',
-          total: 750,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 9)),
-      ExpenseModel(
-          id: 8,
-          title: 'Housing',
-          total: 150,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 8)),
-      ExpenseModel(
-          id: 9,
-          title: 'Housing',
-          total: 230,
-          category: ExpenseCategory.Housing,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          id: 10,
-          title: 'Transportation',
-          total: 230,
-          category: ExpenseCategory.Transportation,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-      ExpenseModel(
-          id: 11,
-          title: 'KFC',
-          total: 230,
-          category: ExpenseCategory.Food,
-          isRecurring: false,
-          date: DateTime(2024, 11)),
-    ];
+  //Data fetching methods
+  Future<void> performExpensesFetch(
+      {bool fetchMonthlyExpenses = false, bool fetchExpPerType = false}) async {
+    try {
+      //indicate that a response from the server is awaited
+      allExpensesState.value = DataState.loading;
+      if (fetchMonthlyExpenses) {
+        monthlyExpensesState.value = DataState.loading;
+      }
+      if (fetchExpPerType) {
+        expPerTypeState.value = DataState.loading;
+      }
 
-    allExpenses.value = expenses;
+      //handle the response
+      List<dynamic> responseList =
+          await ExpenseHttpService.instance.getAllAsync<List<dynamic>>();
 
-    DateTime dateTime = DateTime.now();
-    var thisMonth = dateTime.month;
-    var thisYear = dateTime.year;
+      //explicitly cast the response
+      List<ExpenseResponse> expenseList = responseList
+          .map((item) => ExpenseResponse.fromJson(item as Map<String, dynamic>))
+          .toList();
 
-    List<ExpenseModel> filteredExpenses = expenses
-        .where((expense) =>
-            expense.date.year == thisYear && expense.date.month == thisMonth)
+      allExpenses.value = convertResponseToExpenses(expenseList);
+      allExpensesState.value = DataState.success;
+
+      //Filters. Can be passed later on
+      DateTime dateTime = DateTime.now();
+      var thisMonth = dateTime.month;
+      var thisYear = dateTime.year;
+      List<ExpenseModel> filteredExpenses;
+
+      if (fetchMonthlyExpenses) {
+        filteredExpenses = allExpenses.value
+            .where((expense) =>
+                expense.date.year == thisYear &&
+                expense.date.month == thisMonth)
+            .toList();
+        updateExpensesPerType(filteredExpenses);
+        expPerTypeState.value = DataState.success;
+      }
+
+      if (fetchExpPerType) {
+        filteredExpenses = allExpenses.value
+            .where((expense) => expense.date.year == thisYear)
+            .toList();
+        filteredExpenses.sort((a, b) => a.date.month.compareTo(b.date.month));
+        updateAverageExpenses(filteredExpenses);
+      }
+    } catch (e) {
+      allExpensesState.value = DataState.error;
+      expPerTypeState.value = DataState.error;
+      monthlyExpensesState.value = DataState.error;
+    }
+  }
+
+  Future<void> performAddExpense(ExpenseModel model) async {
+    await ExpenseHttpService.instance.postAsync<PostExpenseRequestBody>(
+        requestBody: PostExpenseRequestBody(
+            title: model.title,
+            total: model.total,
+            category: model.category.name,
+            isRecurring: model.isRecurring,
+            date: model.date));
+  }
+
+  //Helper methods
+  List<ExpenseModel> convertResponseToExpenses(
+      List<ExpenseResponse> responseList) {
+    return responseList
+        .map((responseObj) => ExpenseModel(
+            id: responseObj.id,
+            title: responseObj.title,
+            total: responseObj.total,
+            category: ExpenseCategory.values.firstWhere(
+                (category) => category.name == responseObj.category),
+            isRecurring: responseObj.isRecurring,
+            date: responseObj.date))
         .toList();
-    updateExpensesPerType(filteredExpenses);
+  }
 
-    filteredExpenses =
-        expenses.where((expense) => expense.date.year == thisYear).toList();
-    updateAvgExpensesPerMonth(filteredExpenses);
+  void updateAverageExpenses(List<ExpenseModel> expenses) {
+    Map<double, double> map = {};
+    try {
+      for (var expense in expenses) {
+        var key = expense.date.month.toDouble() - 1;
+        if (map.containsKey(key)) {
+          map[key] = map[key]! + expense.total;
+        } else {
+          map[key] = expense.total;
+        }
+      }
+    } catch (exception) {
+      //suppress
+    }
+    monthlyExpenses.value = map;
   }
 
   void updateExpensesPerType(List<ExpenseModel> expenses) {
@@ -125,45 +138,8 @@ class DataController {
         map[key] = expense.total;
       }
     }
-    expensesPerType.value = map;
-  }
-
-  void updateAvgExpensesPerMonth(List<ExpenseModel> expenses) {
-    Map<double, double> map = {};
-    try {
-      for (var expense in expenses) {
-        var key = expense.date.month.toDouble() - 1;
-        if (map.containsKey(key)) {
-          map[key] = map[key]! + expense.total;
-        } else {
-          map[key] = expense.total;
-        }
-      }
-    } catch (exception) {}
-    avgExpensesPerMonth.value = map;
-  }
-
-  bool performAddExpense(ExpenseModel expense) {
-    allExpenses.value.add(expense);
-    refreshExpenseNotifiers();
-    return true;
-  }
-
-  void refreshExpenseNotifiers() {
-    DateTime dateTime = DateTime.now();
-    var thisMonth = dateTime.month;
-    var thisYear = dateTime.year;
-
-    List<ExpenseModel> filteredExpenses = allExpenses.value
-        .where((expense) =>
-            expense.date.year == thisYear && expense.date.month == thisMonth)
-        .toList();
-    updateExpensesPerType(filteredExpenses);
-
-    filteredExpenses = allExpenses.value
-        .where((expense) => expense.date.year == thisYear)
-        .toList();
-    filteredExpenses.sort((a, b) => a.date.month.compareTo(b.date.month));
-    updateAvgExpensesPerMonth(filteredExpenses);
+    expPerType.value = map;
   }
 }
+
+enum DataState { loading, success, error }

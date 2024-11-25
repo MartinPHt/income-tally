@@ -12,7 +12,8 @@ class CustomLineChart extends StatefulWidget {
   const CustomLineChart({
     super.key,
     this.data = const [],
-    this.bottomTitlesGenerator = defaultGetTitle, this.margin,
+    this.bottomTitlesGenerator = defaultGetTitle,
+    this.margin,
   });
 
   @override
@@ -45,11 +46,14 @@ class _CustomLineChartState extends State<CustomLineChart> {
 
   @override
   Widget build(BuildContext context) {
-    double sumOfAllValues =
-        widget.data.map((value) => value.y).reduce((a, b) => a + b);
-    double averageValue = sumOfAllValues / widget.data.length;
+    double averageValue = 0;
+    if (widget.data.isNotEmpty) {
+      double sumOfAllValues =
+          widget.data.map((value) => value.y).reduce((a, b) => a + b);
+      averageValue = sumOfAllValues / widget.data.length;
+    }
 
-    var lisOfWidgets = [
+    var lineChartTree = [
       Container(
         margin: const EdgeInsets.only(right: 10, bottom: 10),
         width: 50,
@@ -82,28 +86,25 @@ class _CustomLineChartState extends State<CustomLineChart> {
       ),
     ];
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth <= 600) {
-          return Container(
-            margin: widget.margin,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: lisOfWidgets,
-            ),
-          );
-        }
-        else {
-          return Container(
-            margin: widget.margin,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: lisOfWidgets,
-            ),
-          );
-        }
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth <= 600) {
+        return Container(
+          margin: widget.margin,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: lineChartTree,
+          ),
+        );
+      } else {
+        return Container(
+          margin: widget.margin,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: lineChartTree,
+          ),
+        );
       }
-    );
+    });
   }
 
   LineChartData mainData() {
@@ -174,7 +175,9 @@ class _CustomLineChartState extends State<CustomLineChart> {
   }
 
   LineChartData avgData(double averageValue) {
-    var values = widget.data.map((data) => data.x).toList();
+    List<double> values = widget.data.isNotEmpty
+        ? widget.data.map((data) => data.x).toList()
+        : [0.0];
 
     return LineChartData(
       //lineTouchData: const LineTouchData(enabled: true),

@@ -439,53 +439,56 @@ class AddExpenseViewState extends State<AddExpenseView> {
     ));
   }
 
-  void doAddNewExpense(BuildContext context) {
-    var dateParts = dateController.text.split('/');
-    int month = int.parse(dateParts[0]);
-    int year = int.parse(dateParts[1]);
-    var expense = ExpenseModel(
-        id: -1,
-        title: titleController.text,
-        total: double.parse(totalController.text),
-        category: ExpenseCategory.values.firstWhere(
-            (e) => e.name == selectedExpenseCategory,
-            orElse: () => ExpenseCategory.Other),
-        isRecurring: isRecurring,
-        date: DateTime(year, month));
+  Future<void> doAddNewExpense(BuildContext context) async {
+    try {
+      var dateParts = dateController.text.split('/');
+      int month = int.parse(dateParts[0]);
+      int year = int.parse(dateParts[1]);
+      var expense = ExpenseModel(
+          id: -1,
+          title: titleController.text,
+          total: double.parse(totalController.text),
+          category: ExpenseCategory.values.firstWhere(
+              (e) => e.name == selectedExpenseCategory,
+              orElse: () => ExpenseCategory.Other),
+          isRecurring: isRecurring,
+          date: DateTime(year, month));
 
-    var result = DataController.instance.performAddExpense(expense);
-    if (result) {
+      await DataController.instance.performAddExpense(expense);
+      await DataController.instance.performExpensesFetch(fetchMonthlyExpenses: true);
       showDialogWithAutoClose(context, isSuccessful: true, func: () {
         // go back to previous page
         Navigator.pop(context);
       });
-    } else {
-
+    } catch (ex) {
+      String temp = ex.toString();
+      showDialogWithAutoClose(context, isSuccessful: false, func: () {});
     }
   }
 
-  void doEditNewExpense(BuildContext context) {
-    var dateParts = dateController.text.split('/');
-    int month = int.parse(dateParts[0]);
-    int year = int.parse(dateParts[1]);
-    var expense = ExpenseModel(
-        id: passedModel!.id,
-        title: titleController.text,
-        total: double.parse(totalController.text),
-        category: ExpenseCategory.values.firstWhere(
-            (e) => e.name == selectedExpenseCategory,
-            orElse: () => ExpenseCategory.Other),
-        isRecurring: isRecurring,
-        date: DateTime(year, month));
+  Future<void> doEditNewExpense(BuildContext context) async {
+    try {
+      var dateParts = dateController.text.split('/');
+      int month = int.parse(dateParts[0]);
+      int year = int.parse(dateParts[1]);
+      var expense = ExpenseModel(
+          id: passedModel!.id,
+          title: titleController.text,
+          total: double.parse(totalController.text),
+          category: ExpenseCategory.values.firstWhere(
+              (e) => e.name == selectedExpenseCategory,
+              orElse: () => ExpenseCategory.Other),
+          isRecurring: isRecurring,
+          date: DateTime(year, month));
 
-    var result = DataController.instance.performAddExpense(expense);
-    if (result) {
+      await DataController.instance.performAddExpense(expense);
+      await DataController.instance.performExpensesFetch(fetchMonthlyExpenses: true);
       showDialogWithAutoClose(context, isSuccessful: true, func: () {
         // go back to previous page
         Navigator.pop(context);
       });
-    } else {
-
+    } catch (ex) {
+      showDialogWithAutoClose(context, isSuccessful: false, func: () {});
     }
   }
 
@@ -518,7 +521,9 @@ class AddExpenseViewState extends State<AddExpenseView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      isSuccessful ? "lib/icons/successIcon.png" : "lib/icons/errorIcon.png",
+                      isSuccessful
+                          ? "lib/icons/successIcon.png"
+                          : "lib/icons/errorIcon.png",
                       width: 80,
                       height: 80,
                     ),

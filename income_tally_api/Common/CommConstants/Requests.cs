@@ -23,7 +23,7 @@ namespace Common.CommConstants
     #region Expense Requests
     public class CreateExpenseRequest : DataRequest
     {
-        public CreateExpenseRequest(string title, double total, ExpenseCategory category, bool isRecurring, DateTime date)
+        public CreateExpenseRequest(string title, double total, string category, bool isRecurring, DateTime date)
             : base()
         {
             Title = title;
@@ -34,14 +34,14 @@ namespace Common.CommConstants
         }
         public string Title { get; set; }
         public double Total { get; set; }
-        public ExpenseCategory Category { get; set; }
+        public string Category { get; set; }
         public bool IsRecurring { get; set; }
         public DateTime Date { get; set; }
     }
 
     public class UpdateExpenseRequest : DataRequest
     {
-        public UpdateExpenseRequest(int id, string title, double total, ExpenseCategory category, bool isRecurring, DateTime date)
+        public UpdateExpenseRequest(int id, string title, double total, string category, bool isRecurring, DateTime date)
             : base()
         {
             Id = id;
@@ -55,7 +55,7 @@ namespace Common.CommConstants
         public int Id { get; set; }
         public string Title { get; set; }
         public double Total { get; set; }
-        public ExpenseCategory Category { get; set; }
+        public String Category { get; set; }
         public bool IsRecurring { get; set; }
         public DateTime Date { get; set; }
     }

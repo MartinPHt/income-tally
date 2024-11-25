@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:income_tally/Models/expense_model.dart';
-import 'package:income_tally/widgets/rounded_container.dart';
 
 class CustomScrollBehavior extends MaterialScrollBehavior {
   @override

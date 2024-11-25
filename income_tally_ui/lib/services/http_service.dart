@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart';
-import 'package:income_tally/Models/expense_request.dart';
+import 'package:income_tally/Models/request_model.dart';
 import 'package:income_tally/services/constants.dart';
 import 'package:income_tally/services/helpers.dart';
 
@@ -20,25 +20,22 @@ abstract class EntityHttpService {
       : _httpClient = Client();
 
   // Post request
-  Future<T> postAsync<T>(
-      {required PostExpenseRequestBody requestBody, int? timeoutSec}) async {
+  Future<void> postAsync<T>(
+      {required T requestBody, int? timeoutSec}) async {
     Uint8List? requestContent;
-    final jsonString = JsonSerialize.serialize(requestBody);
+    final jsonString =
+        JsonSerialize.serialize<T>(requestBody);
     requestContent = utf8.encode(jsonString);
 
-    final response = await _httpClient
+    final Response response = await _httpClient
         .post(
-          Uri.parse('$baseUrl$controllerName'),
+          Uri.parse('$baseUrl/$controllerName'),
           headers: {'Content-Type': 'application/json'},
           body: requestContent,
         )
         .timeout(Duration(seconds: timeoutSec ?? defaultTimeoutSec));
 
-    if (response.statusCode == 200) {
-      return JsonSerialize.deserialize<T>(response.body);
-    } else {
-      throw HttpException('Request failed with status: ${response.statusCode}');
-    }
+    ensureSuccessfulStatusCode(response);
   }
 
   // Get search request
@@ -46,47 +43,38 @@ abstract class EntityHttpService {
       {required String filter,
       required String searchWord,
       int? timeoutSec}) async {
-    final response = await _httpClient
+    final Response response = await _httpClient
         .get(
-          Uri.parse('$baseUrl$controllerName/search/$filter/$searchWord'),
+          Uri.parse('$baseUrl/$controllerName/search/$filter/$searchWord'),
         )
         .timeout(Duration(seconds: timeoutSec ?? defaultTimeoutSec));
 
-    if (response.statusCode == 200) {
-      return JsonSerialize.deserialize<T>(response.body);
-    } else {
-      throw HttpException('Request failed with status: ${response.statusCode}');
-    }
+    ensureSuccessfulStatusCode(response);
+    return JsonSerialize.deserialize<T>(response.body);
   }
 
   // Get request by ID
   Future<T> getAsync<T>({required String id, int? timeoutSec}) async {
-    final response = await _httpClient
+    final Response response = await _httpClient
         .get(
-          Uri.parse('$baseUrl$controllerName/$id'),
+          Uri.parse('$baseUrl/$controllerName/$id'),
         )
         .timeout(Duration(seconds: timeoutSec ?? defaultTimeoutSec));
 
-    if (response.statusCode == 200) {
-      return JsonSerialize.deserialize<T>(response.body);
-    } else {
-      throw HttpException('Request failed with status: ${response.statusCode}');
-    }
+    ensureSuccessfulStatusCode(response);
+    return JsonSerialize.deserialize<T>(response.body);
   }
 
   // Get all request
   Future<T> getAllAsync<T>({int? timeoutSec}) async {
-    final response = await _httpClient
+    final Response response = await _httpClient
         .get(
-          Uri.parse('$baseUrl$controllerName'),
+          Uri.parse('$baseUrl/$controllerName'),
         )
         .timeout(Duration(seconds: timeoutSec ?? defaultTimeoutSec));
 
-    if (response.statusCode == 200) {
-      return JsonSerialize.deserialize<T>(response.body);
-    } else {
-      throw HttpException('Request failed with status: ${response.statusCode}');
-    }
+    ensureSuccessfulStatusCode(response);
+    return JsonSerialize.deserialize<T>(response.body);
   }
 
   // Put request
@@ -98,32 +86,32 @@ abstract class EntityHttpService {
     final jsonString = JsonSerialize.serialize(request);
     requestContent = utf8.encode(jsonString);
 
-    final response = await _httpClient
+    final Response response = await _httpClient
         .put(
-          Uri.parse('$baseUrl$controllerName/$id'),
+          Uri.parse('$baseUrl/$controllerName/$id'),
           headers: {'Content-Type': 'application/json'},
           body: requestContent,
         )
         .timeout(Duration(seconds: timeoutSec ?? defaultTimeoutSec));
 
-    if (response.statusCode == 200) {
-      return JsonSerialize.deserialize<T>(response.body);
-    } else {
-      throw HttpException('Request failed with status: ${response.statusCode}');
-    }
+    ensureSuccessfulStatusCode(response);
+    return JsonSerialize.deserialize<T>(response.body);
   }
 
   // Delete request
   Future<T> deleteAsync<T>({required String id, int? timeoutSec}) async {
-    final response = await _httpClient
+    final Response response = await _httpClient
         .delete(
-          Uri.parse('$baseUrl$controllerName/$id'),
+          Uri.parse('$baseUrl/$controllerName/$id'),
         )
         .timeout(Duration(seconds: timeoutSec ?? defaultTimeoutSec));
 
-    if (response.statusCode == 200) {
+    ensureSuccessfulStatusCode(response);
       return JsonSerialize.deserialize<T>(response.body);
-    } else {
+  }
+
+  void ensureSuccessfulStatusCode(Response response) {
+    if (response.statusCode < 200 || response.statusCode >= 300) {
       throw HttpException('Request failed with status: ${response.statusCode}');
     }
   }

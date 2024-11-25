@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/views/insights_page.dart';
 import 'package:income_tally/views/home_page.dart';
@@ -32,10 +33,13 @@ class MainViewState extends State<MainView> {
   ];
 
   // Function to handle tab switching
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  void _goToScreen(int screenIndex) {
+    if (screenIndex != _selectedIndex) {
+      handleFetchExpenses(screenIndex);
+      setState(() {
+        _selectedIndex = screenIndex;
+      });
+    }
   }
 
   Widget _generateSideNavButton(String unselectedImagePath,
@@ -44,10 +48,11 @@ class MainViewState extends State<MainView> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       child: FilledButton(
         onPressed: () {
-          _onItemTapped(index);
+          _goToScreen(index);
         },
         style: FilledButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             backgroundColor: Theme.of(context).canvasColor,
             overlayColor: Colors.deepPurple[300],
             surfaceTintColor: Colors.deepPurple[100],
@@ -63,6 +68,28 @@ class MainViewState extends State<MainView> {
         ),
       ),
     );
+  }
+
+  void handleFetchExpenses(int screenIndex) {
+    bool fetchMonthlyExpenses = false;
+    bool fetchExpPerType = false;
+
+    //home screen
+    if (screenIndex == 0) {
+      fetchMonthlyExpenses = true;
+    }
+    //Insights screen
+    if (screenIndex == 1) {
+      fetchExpPerType = true;
+    }
+
+    DataController.instance.performExpensesFetch(fetchMonthlyExpenses: fetchMonthlyExpenses, fetchExpPerType: fetchExpPerType);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    handleFetchExpenses(_selectedIndex);
   }
 
   @override
@@ -123,7 +150,10 @@ class MainViewState extends State<MainView> {
                   const Positioned(
                       left: 10,
                       bottom: 10,
-                      child: Text('Copyright © 2024 Martin P.', style: TextStyle(fontSize: 12),))
+                      child: Text(
+                        'Copyright © 2024 Martin P.',
+                        style: TextStyle(fontSize: 12),
+                      ))
                 ]),
               ),
             ),
@@ -173,7 +203,7 @@ class MainViewState extends State<MainView> {
           visible: bottomNavBarVisible,
           child: BottomNavigationBar(
             currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
+            onTap: _goToScreen,
             items: [
               BottomNavigationBarItem(
                 icon: _buildTabIconFromImages(

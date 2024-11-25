@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:income_tally/Models/expense_model.dart';
 import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
@@ -246,7 +245,7 @@ class HomePageState extends State<HomePage> {
                                 alignment: Alignment.topLeft,
                                 child: ValueListenableBuilder(
                                   valueListenable: DataController
-                                      .instance.avgExpensesPerMonth,
+                                      .instance.monthlyExpenses,
                                   builder: (context, value, child) {
                                     List<FlSpot> dataSet = [];
                                     if (value.isNotEmpty) {
