@@ -129,7 +129,7 @@ class HomePageState extends State<HomePage> {
                                   notifier:
                                       DataController.instance.allExpensesState,
                                   onLoadingWidget: _shimmerTopContainers(),
-                                  onErrorWidget: _errorStateTopContainers(title: '---- BGN', text: 'Available money'),
+                                  onErrorWidget: _errorStateTopContainers(title: '---- BGN', text: 'Expenses for the month'),
                                   successWidget: Container(
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
@@ -154,7 +154,7 @@ class HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Text(
-                                                    "Available money",
+                                                    "Expenses for the month",
                                                     style: TextStyle(
                                                       color: Colors.grey[600],
                                                     ),
@@ -163,13 +163,19 @@ class HomePageState extends State<HomePage> {
                                               ),
                                               Row(
                                                 children: [
-                                                  Text(
-                                                    "2500 BGN",
-                                                    style: TextStyle(
-                                                        color: Colors.grey[900],
-                                                        fontSize: 28,
-                                                        fontWeight:
+                                                  ValueListenableBuilder(
+                                                    valueListenable: DataController.instance.expensesTotalNotifier,
+                                                    builder: (context, value, child) {
+                                                      return Text(
+                                                        "$value BGN",
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .grey[900],
+                                                            fontSize: 28,
+                                                            fontWeight:
                                                             FontWeight.bold),
+                                                      );
+                                                    }
                                                   )
                                                 ],
                                               ),

@@ -5,6 +5,9 @@ import 'package:income_tally/Models/response_model.dart';
 import 'package:income_tally/services/http_service.dart';
 
 class DataController {
+  final ValueNotifier<double> expensesTotalNotifier =
+  ValueNotifier(0);
+
   //expenses per type notifiers
   final ValueNotifier<DataState> expPerTypeState =
       ValueNotifier(DataState.loading);
@@ -76,6 +79,18 @@ class DataController {
       var thisYear = dateTime.year;
       List<ExpenseModel> filteredExpenses;
 
+      filteredExpenses = allExpenses.value
+          .where((expense) =>
+      expense.date.year == thisYear &&
+          expense.date.month == thisMonth)
+          .toList();
+      expensesTotalNotifier.value = filteredExpenses.fold(0.0, (sum, expense) => sum + expense.total);
+
+      if (updateExpPerType) {
+        updateExpensesPerType(filteredExpenses);
+        expPerTypeState.value = DataState.loaded;
+      }
+
       if (updateMonthlyExpenses) {
         filteredExpenses = allExpenses.value
             .where((expense) => expense.date.year == thisYear)
@@ -83,16 +98,6 @@ class DataController {
         filteredExpenses.sort((a, b) => a.date.month.compareTo(b.date.month));
         updateAverageExpenses(filteredExpenses);
         monthlyExpensesState.value = DataState.loaded;
-      }
-
-      if (updateExpPerType) {
-        filteredExpenses = allExpenses.value
-            .where((expense) =>
-                expense.date.year == thisYear &&
-                expense.date.month == thisMonth)
-            .toList();
-        updateExpensesPerType(filteredExpenses);
-        expPerTypeState.value = DataState.loaded;
       }
     } catch (e) {
       allExpensesState.value = DataState.failure;
