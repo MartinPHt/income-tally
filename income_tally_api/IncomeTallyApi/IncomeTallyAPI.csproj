@@ -9,9 +9,13 @@
 
   <ItemGroup>
     <Compile Remove="Controller\**" />
+    <Compile Remove="Migrations\**" />
     <Content Remove="Controller\**" />
+    <Content Remove="Migrations\**" />
     <EmbeddedResource Remove="Controller\**" />
+    <EmbeddedResource Remove="Migrations\**" />
     <None Remove="Controller\**" />
+    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,10 +35,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

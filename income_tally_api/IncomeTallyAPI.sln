@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IncomeTallyAPI", "BakeryApi\IncomeTallyAPI.csproj", "{8E95ACD0-CBCA-450A-97C2-7FE6947258D5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{210A9A82-B0F6-497D-9F5D-1BE95A6AC93C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IncomeTallyAPI", "IncomeTallyApi\IncomeTallyAPI.csproj", "{70967572-1BCA-47F1-B63C-B80DF4832813}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8E95ACD0-CBCA-450A-97C2-7FE6947258D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E95ACD0-CBCA-450A-97C2-7FE6947258D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E95ACD0-CBCA-450A-97C2-7FE6947258D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E95ACD0-CBCA-450A-97C2-7FE6947258D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{210A9A82-B0F6-497D-9F5D-1BE95A6AC93C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{210A9A82-B0F6-497D-9F5D-1BE95A6AC93C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{210A9A82-B0F6-497D-9F5D-1BE95A6AC93C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{210A9A82-B0F6-497D-9F5D-1BE95A6AC93C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70967572-1BCA-47F1-B63C-B80DF4832813}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70967572-1BCA-47F1-B63C-B80DF4832813}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70967572-1BCA-47F1-B63C-B80DF4832813}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70967572-1BCA-47F1-B63C-B80DF4832813}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
