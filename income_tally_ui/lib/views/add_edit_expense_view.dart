@@ -359,9 +359,39 @@ class AddExpenseViewState extends State<AddExpenseView> {
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     if (passedModel == null) {
-                                      await doAddNewExpense(context);
+                                      //show progress dialog
+                                      DialogHelper.showProgressDialog(context: context, title: 'Adding expense...');
+                                      bool result = await doAddNewExpense(context);
+                                      //close progress dialog
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+
+                                      //show dialog with auto close
+                                      if (context.mounted) {
+                                        DialogHelper.showDialogWithAutoClose(context, isSuccessful: result, func: () {
+                                          if (result) {
+                                            Navigator.pop(context);
+                                          }
+                                        });
+                                      }
                                     } else {
-                                      await doEditNewExpense(context);
+                                      //show progress dialog
+                                      DialogHelper.showProgressDialog(context: context, title: 'Saving changes...');
+                                      bool result = await doEditNewExpense(context);
+                                      //close progress dialog
+                                      if (context.mounted) {
+                                          Navigator.pop(context);
+                                      }
+
+                                      //show dialog with auto close
+                                      if (context.mounted) {
+                                        DialogHelper.showDialogWithAutoClose(context, isSuccessful: result, func: () {
+                                          if (result) {
+                                            Navigator.pop(context);
+                                          }
+                                        });
+                                      }
                                     }
                                   }
                                 },
@@ -439,7 +469,8 @@ class AddExpenseViewState extends State<AddExpenseView> {
     ));
   }
 
-  Future<void> doAddNewExpense(BuildContext context) async {
+  Future<bool> doAddNewExpense(BuildContext context) async {
+    bool result;
     try {
       var dateParts = dateController.text.split('/');
       int month = int.parse(dateParts[0]);
@@ -456,20 +487,15 @@ class AddExpenseViewState extends State<AddExpenseView> {
 
       await DataController.instance.performAddExpense(expense);
       await DataController.instance.performExpensesFetch(updateMonthlyExpenses: true);
-      if (context.mounted) {
-        DialogHelper.showDialogWithAutoClose(context, isSuccessful: true, func: () {
-          // go back to previous page
-          Navigator.pop(context);
-        });
-      }
+      result = true;
     } catch (ex) {
-      if (context.mounted) {
-        DialogHelper.showDialogWithAutoClose(context, isSuccessful: false, func: () {});
-      }
+      result = false;
     }
+    return result;
   }
 
-  Future<void> doEditNewExpense(BuildContext context) async {
+  Future<bool> doEditNewExpense(BuildContext context) async {
+    bool result;
     try {
       var dateParts = dateController.text.split('/');
       int month = int.parse(dateParts[0]);
@@ -486,16 +512,10 @@ class AddExpenseViewState extends State<AddExpenseView> {
 
       await DataController.instance.performEditExpense(expense);
       await DataController.instance.performExpensesFetch(updateMonthlyExpenses: true);
-      if (context.mounted) {
-        DialogHelper.showDialogWithAutoClose(context, isSuccessful: true, func: () {
-          // go back to previous page
-          Navigator.pop(context);
-        });
-      }
+      result = true;
     } catch (ex) {
-      if (context.mounted) {
-        DialogHelper.showDialogWithAutoClose(context, isSuccessful: false, func: () {});
-      }
+      result = false;
     }
+    return result;
   }
 }

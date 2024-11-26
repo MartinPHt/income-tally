@@ -3,10 +3,10 @@ import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/views/insights_page.dart';
 import 'package:income_tally/views/home_page.dart';
-import 'package:income_tally/views/table_page.dart';
+import 'package:income_tally/views/expenses_page.dart';
 import 'package:income_tally/widgets/home_page_header.dart';
 import 'package:income_tally/widgets/insights_page_header.dart';
-import 'package:income_tally/widgets/table_page_header.dart';
+import 'package:income_tally/widgets/expenses_page_header.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});

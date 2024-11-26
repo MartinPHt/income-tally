@@ -56,12 +56,15 @@ namespace IncomeTallyAPI.Controllers
 
         // Retrieve all
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
                 var allExpenses = _expensesRepo.GetAll(i => true);
                 var response = allExpenses.Select(expense => GenerateResponse(expense)).ToList();
+
+                //Simulate delay
+                await Task.Delay(1000);
                 return Ok(response);
             }
             catch (Exception ex)

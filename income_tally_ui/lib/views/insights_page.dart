@@ -48,123 +48,129 @@ class InsidesPageState extends State<InsidesPage> {
 
     return Container(
         margin: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
-        child: ListView(physics: const BouncingScrollPhysics(), children: [
-          Wrap(
-            children: [
-              RoundedContainer(
-                padding: const EdgeInsets.all(20),
-                height: MediaQuery.of(context).size.height / graphCount / 1.4,
-                constraints:
-                    const BoxConstraints(minHeight: 500, minWidth: 1300),
-                margin: const EdgeInsets.only(
-                    left: 20, top: 10, right: 20, bottom: 20),
-                child: StateAwareWidget(
-                  notifier: DataController.instance.expPerTypeState,
-                  onLoadingWidget: const Center(
-                    child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: LineChartShimmer()),
-                  ),
-                  onErrorWidget: const Center(
-                      child: IntrinsicHeight(
-                          child: ErrorStateWidget())),
-                  successWidget: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          margin: const EdgeInsets.only(left: 10, bottom: 20),
-                          child:
-                              Text('Expense Analytics', style: titlesStyle)),
-                      Expanded(
-                        child: ValueListenableBuilder(
-                          valueListenable:
-                              DataController.instance.expPerType,
-                          builder: (context, value, child) {
-                            List<PieChartDataEntity> dataSet = [];
-                            if (value.isNotEmpty) {
-                              var expensesSum = value.entries.map((entry) {
-                                return entry.value;
-                              }).reduce((a, b) => a + b);
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await DataController.instance
+                .performExpensesFetch(updateExpPerType: true);
+          },
+          child: ListView(physics: const BouncingScrollPhysics(), children: [
+            Wrap(
+              children: [
+                RoundedContainer(
+                  padding: const EdgeInsets.all(20),
+                  height: MediaQuery.of(context).size.height / graphCount / 1.4,
+                  constraints:
+                      const BoxConstraints(minHeight: 500, minWidth: 1300),
+                  margin: const EdgeInsets.only(
+                      left: 20, top: 10, right: 20, bottom: 20),
+                  child: StateAwareWidget(
+                    notifier: DataController.instance.expPerTypeState,
+                    onLoadingWidget: const Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: LineChartShimmer()),
+                    ),
+                    onErrorWidget: const Center(
+                        child: IntrinsicHeight(
+                            child: ErrorStateWidget())),
+                    successWidget: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            margin: const EdgeInsets.only(left: 10, bottom: 20),
+                            child:
+                                Text('Expense Analytics', style: titlesStyle)),
+                        Expanded(
+                          child: ValueListenableBuilder(
+                            valueListenable:
+                                DataController.instance.expPerType,
+                            builder: (context, value, child) {
+                              List<PieChartDataEntity> dataSet = [];
+                              if (value.isNotEmpty) {
+                                var expensesSum = value.entries.map((entry) {
+                                  return entry.value;
+                                }).reduce((a, b) => a + b);
 
-                              dataSet = value.entries.map((entry) {
-                                return PieChartDataEntity(
-                                    title:
-                                        '${(entry.value * 100 / expensesSum).toStringAsFixed(1)}%',
-                                    value: entry.value,
-                                    color: ExpenseCategoriesColors
-                                        .collection[entry.key]!,
-                                    legendHeader: entry.key.name);
-                              }).toList();
-                            }
-                            return CustomPieChart(
-                              dataSet: dataSet,
-                              //centerSpaceRadius: 1,
-                            );
-                          },
-                        ),
-                      ),
-                      // const Column(
-                      //   mainAxisAlignment: MainAxisAlignment.end,
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   children: [Text("test")],
-                      // )
-                    ],
-                  ),
-                ),
-              ),
-              RoundedContainer(
-                height: MediaQuery.of(context).size.height / graphCount / 1.3,
-                constraints: const BoxConstraints(minHeight: 300),
-                padding: const EdgeInsets.all(20),
-                margin: const EdgeInsets.only(
-                    left: 20, top: 10, right: 20, bottom: 20),
-                child: StateAwareWidget(
-                  notifier: DataController.instance.expPerTypeState,
-                  onLoadingWidget: const Center(
-                    child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: LineChartShimmer()),
-                  ),
-                  onErrorWidget: const Center(
-                      child: IntrinsicHeight(
-                          child: ErrorStateWidget())),
-                  successWidget: ValueListenableBuilder(
-                    valueListenable:
-                        DataController.instance.expPerType,
-                    builder: (context, value, child) {
-                      List<FlSpot> dataSet = [];
-                      if (value.isNotEmpty) {
-                        titleCategories.clear();
-                        int index = -1;
-                        dataSet = value.entries.map((entry) {
-                          index++;
-                          titleCategories[index] = entry.key.name.toString();
-                          return FlSpot(index.toDouble(), entry.value);
-                        }).toList();
-                      }
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              margin: const EdgeInsets.only(left: 10, bottom: 0),
-                              child: Text('Dashboard', style: titlesStyle)),
-                          Expanded(
-                            child: CustomLineChart(
-                              margin: const EdgeInsets.all(10),
-                              bottomTitlesGenerator: lineChartBottomTitles,
-                              data: dataSet,
-                            ),
+                                dataSet = value.entries.map((entry) {
+                                  return PieChartDataEntity(
+                                      title:
+                                          '${(entry.value * 100 / expensesSum).toStringAsFixed(1)}%',
+                                      value: entry.value,
+                                      color: ExpenseCategoriesColors
+                                          .collection[entry.key]!,
+                                      legendHeader: entry.key.name);
+                                }).toList();
+                              }
+                              return CustomPieChart(
+                                dataSet: dataSet,
+                                //centerSpaceRadius: 1,
+                              );
+                            },
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                        // const Column(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: [Text("test")],
+                        // )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ]));
+                RoundedContainer(
+                  height: MediaQuery.of(context).size.height / graphCount / 1.3,
+                  constraints: const BoxConstraints(minHeight: 300),
+                  padding: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.only(
+                      left: 20, top: 10, right: 20, bottom: 20),
+                  child: StateAwareWidget(
+                    notifier: DataController.instance.expPerTypeState,
+                    onLoadingWidget: const Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: LineChartShimmer()),
+                    ),
+                    onErrorWidget: const Center(
+                        child: IntrinsicHeight(
+                            child: ErrorStateWidget())),
+                    successWidget: ValueListenableBuilder(
+                      valueListenable:
+                          DataController.instance.expPerType,
+                      builder: (context, value, child) {
+                        List<FlSpot> dataSet = [];
+                        if (value.isNotEmpty) {
+                          titleCategories.clear();
+                          int index = -1;
+                          dataSet = value.entries.map((entry) {
+                            index++;
+                            titleCategories[index] = entry.key.name.toString();
+                            return FlSpot(index.toDouble(), entry.value);
+                          }).toList();
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                margin: const EdgeInsets.only(left: 10, bottom: 0),
+                                child: Text('Dashboard', style: titlesStyle)),
+                            Expanded(
+                              child: CustomLineChart(
+                                margin: const EdgeInsets.all(10),
+                                bottomTitlesGenerator: lineChartBottomTitles,
+                                data: dataSet,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ]),
+        ));
   }
 
   Widget lineChartBottomTitles(double value, TitleMeta meta) {

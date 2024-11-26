@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -369,6 +370,45 @@ abstract class DialogHelper {
     } else if (confirmed == false && onCanceled != null) {
       onCanceled();
     }
+  }
+
+  static void showProgressDialog({
+    required BuildContext context,
+    required String title,
+  }) {
+    // Show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent user from closing the dialog manually
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(width: 20),
+                Flexible(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // Function to show a dialog and close it after 2 seconds

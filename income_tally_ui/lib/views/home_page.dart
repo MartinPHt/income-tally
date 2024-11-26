@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
 import 'package:income_tally/widgets/error_state_widget.dart';
+import 'package:income_tally/widgets/line_chart.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
 import 'package:income_tally/widgets/shimmer_loading_list.dart';
 import 'package:income_tally/widgets/sliding_menu_item.dart';
 import 'package:income_tally/widgets/state_aware_widget.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-import '../widgets/line_chart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -307,6 +306,7 @@ class HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+                // Right Expenses List
                 Visibility(
                   visible: isRightExpenseListVisible,
                   child: Expanded(
@@ -321,7 +321,7 @@ class HomePageState extends State<HomePage> {
                         notifier: DataController.instance.allExpensesState,
                         onErrorWidget: const ErrorStateWidget(),
                         onLoadingWidget: const ShimmerLoadingList(
-                          length: 10,
+                          length: 15,
                         ),
                         successWidget: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,30 +336,37 @@ class HomePageState extends State<HomePage> {
                               ),
                             ),
                             Expanded(
-                              child: SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                child: ValueListenableBuilder(
-                                  valueListenable:
-                                      DataController.instance.allExpenses,
-                                  builder: (context, value, child) {
-                                    return Container(
-                                      margin: const EdgeInsets.only(
-                                          left: 20, right: 20),
-                                      child: Column(
-                                        children: List.generate(
-                                            DataController.instance.allExpenses
-                                                .value.length, (index) {
-                                          return Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                vertical: 10),
-                                            child: SlidingUpPanelItem(
-                                                model: DataController.instance
-                                                    .allExpenses.value[index]),
-                                          );
-                                        }),
-                                      ),
-                                    );
-                                  },
+                              child: RefreshIndicator(
+                                triggerMode: RefreshIndicatorTriggerMode.anywhere,
+                                onRefresh: () async {
+                                  await DataController.instance
+                                      .performExpensesFetch(updateMonthlyExpenses: true);
+                                },
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: ValueListenableBuilder(
+                                    valueListenable:
+                                        DataController.instance.allExpenses,
+                                    builder: (context, value, child) {
+                                      return Container(
+                                        margin: const EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Column(
+                                          children: List.generate(
+                                              DataController.instance.allExpenses
+                                                  .value.length, (index) {
+                                            return Container(
+                                              margin: const EdgeInsets.symmetric(
+                                                  vertical: 10),
+                                              child: SlidingUpPanelItem(
+                                                  model: DataController.instance
+                                                      .allExpenses.value[index]),
+                                            );
+                                          }),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
@@ -414,51 +421,52 @@ class HomePageState extends State<HomePage> {
                   ]),
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    controller: controller,
-                    physics: const BouncingScrollPhysics(),
-                    child: ValueListenableBuilder(
-                      valueListenable: DataController.instance.allExpenses,
-                      builder: (context, value, child) {
-                        return Container(
-                          margin: const EdgeInsets.only(left: 20, right: 20),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 20, top: 5, bottom: 5),
-                                  child: const Text(
-                                    'Expenses',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+                  child: StateAwareWidget(
+                    notifier:
+                    DataController.instance.allExpensesState,
+                    onErrorWidget: const ErrorStateWidget(),
+                    onLoadingWidget: const ShimmerLoadingList(
+                      length: 10,
+                    ),
+                    successWidget: SingleChildScrollView(
+                      controller: controller,
+                      physics: const BouncingScrollPhysics(),
+                      child: ValueListenableBuilder(
+                        valueListenable: DataController.instance.allExpenses,
+                        builder: (context, value, child) {
+                          return Container(
+                            margin: const EdgeInsets.only(left: 20, right: 20),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 20, top: 5, bottom: 5),
+                                    child: const Text(
+                                      'Expenses',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                                StateAwareWidget(
-                                  notifier:
-                                      DataController.instance.allExpensesState,
-                                  onErrorWidget: const ErrorStateWidget(),
-                                  onLoadingWidget: const ShimmerLoadingList(
-                                    length: 10,
-                                  ),
-                                  successWidget: Column(
-                                    children: List.generate(
-                                        DataController.instance.allExpenses
-                                            .value.length, (index) {
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        child: SlidingUpPanelItem(
-                                            model: DataController.instance
-                                                .allExpenses.value[index]),
-                                      );
-                                    }),
-                                  ),
-                                )
-                              ]),
-                        );
-                      },
+                                  Column(
+                                      children: List.generate(
+                                          DataController.instance.allExpenses
+                                              .value.length, (index) {
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: SlidingUpPanelItem(
+                                              model: DataController.instance
+                                                  .allExpenses.value[index]),
+                                        );
+                                      }),
+                                    ),
+
+                                ]),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),

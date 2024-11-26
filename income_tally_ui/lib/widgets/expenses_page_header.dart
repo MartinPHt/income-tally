@@ -9,7 +9,7 @@ class TablePageHeader extends StatelessWidget {
       children: [
          Container(
            margin: const EdgeInsets.only(left: 25),
-           child: const Text("Table",
+           child: const Text("Expenses",
            style: TextStyle(
              fontSize: 22,
              fontWeight: FontWeight.bold
