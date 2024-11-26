@@ -189,138 +189,142 @@ abstract class DialogHelper {
         context: context,
         backgroundColor: Colors.transparent,
         builder: (context) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              color: Theme.of(context).canvasColor,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  IconButton(
-                    style:
-                        TextButton.styleFrom(overlayColor: Colors.transparent),
-                    onPressed: () => Navigator.pop(context),
-                    icon: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).canvasColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        width: 25,
-                        height: 25,
-                        child: Icon(
-                          Icons.close,
-                          size: 18,
-                          color: Theme.of(context).hintColor,
-                        )),
-                  ),
-                ]),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  IconGenerator.generateExpenseIcon(expense.category),
-                  const SizedBox(
-                    width: 10,
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                color: Theme.of(context).canvasColor,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    IconButton(
+                      style: TextButton.styleFrom(
+                          overlayColor: Colors.transparent),
+                      onPressed: () => Navigator.pop(context),
+                      icon: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).canvasColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          width: 25,
+                          height: 25,
+                          child: Icon(
+                            Icons.close,
+                            size: 18,
+                            color: Theme.of(context).hintColor,
+                          )),
+                    ),
+                  ]),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    IconGenerator.generateExpenseIcon(expense.category),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      expense.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ]),
+                  const SizedBox(height: 15),
+                  Text(
+                    '${expense.total} BGN',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    expense.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    '${expense.date.month}/${expense.date.year}',
+                    style: const TextStyle(fontSize: 16),
                   ),
-                ]),
-                const SizedBox(height: 15),
-                Text(
-                  '${expense.total} BGN',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  '${expense.date.month}/${expense.date.year}',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  'Category: ${expense.category.name}',
-                  style: const TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  expense.isRecurring ? 'Recurring' : 'Not recurring',
-                  style: const TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 50),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: TextButton(
-                        onPressed: () async {
-                          await Navigator.pushNamed(context, "/add_edit_expense",
-                              arguments: expense);
-                          if (context.mounted){
-                            Navigator.pop(context);
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xff9d6fed),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15))),
-                        child: const Icon(
-                          Icons.edit_outlined,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: TextButton(
-                        onPressed: () {
-                          DialogHelper.showConfirmationDialog(context,
-                              title:
-                                  "Are you sure you want to delete '${expense.title}' expense",
-                              onConfirmed: () async {
-                            var result = await DataController.instance
-                                .performDeleteExpense(expense.id);
-                            if (result) {
-                              await DataController.instance
-                                  .performExpensesFetch(
-                                      updateMonthlyExpenses: true);
-                              if (context.mounted) {
-                                Navigator.pop(context);
-                              }
-                            } else {
-                              if (context.mounted) {
-                                showDialogWithAutoClose(context,
-                                    isSuccessful: false, func: () {});
-                              }
+                  const SizedBox(height: 15),
+                  Text(
+                    'Category: ${expense.category.name}',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    expense.isRecurring ? 'Recurring' : 'Not recurring',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 50),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: TextButton(
+                          onPressed: () async {
+                            await Navigator.pushNamed(
+                                context, "/add_edit_expense",
+                                arguments: expense);
+                            if (context.mounted) {
+                              Navigator.pop(context);
                             }
-                          });
-                        },
-                        style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xfff14646),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15))),
-                        child: const Icon(
-                          Icons.delete_outline,
-                          color: Colors.white,
-                          size: 30,
+                          },
+                          style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xff9d6fed),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15))),
+                          child: const Icon(
+                            Icons.edit_outlined,
+                            color: Colors.white,
+                            size: 30,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ],
+                      const SizedBox(
+                        width: 30,
+                      ),
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: TextButton(
+                          onPressed: () {
+                            DialogHelper.showConfirmationDialog(context,
+                                title:
+                                    "Are you sure you want to delete '${expense.title}' expense",
+                                onConfirmed: () async {
+                              var result = await DataController.instance
+                                  .performDeleteExpense(expense.id);
+                              if (result) {
+                                await DataController.instance
+                                    .performExpensesFetch(
+                                        updateMonthlyExpenses: true);
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              } else {
+                                if (context.mounted) {
+                                  showDialogWithAutoClose(context,
+                                      isSuccessful: false, func: () {});
+                                }
+                              }
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xfff14646),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15))),
+                          child: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           );
         });

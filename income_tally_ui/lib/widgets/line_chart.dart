@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:income_tally/services/helpers.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomLineChart extends StatefulWidget {
   final List<FlSpot> data;
@@ -253,5 +254,95 @@ class _CustomLineChartState extends State<CustomLineChart> {
         ),
       ],
     );
+  }
+}
+
+class LineChartShimmer extends StatelessWidget {
+  const LineChartShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Title Shimmer
+        Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            height: 20,
+            width: 150,
+            color: Colors.grey[300],
+            margin: const EdgeInsets.only(bottom: 16),
+          ),
+        ),
+        // Line Chart Placeholder
+        Expanded(
+          child: CustomPaint(
+            painter: _LineChartShimmerPainter(),
+            child: Container(),
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Bottom axis shimmer
+        Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(
+              7,
+                  (index) => Container(
+                height: 10,
+                width: 30,
+                color: Colors.grey[300],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LineChartShimmerPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey[300]!
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6;
+
+    final pointPaint = Paint()
+      ..color = Colors.grey[300]!
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    final points = [
+      Offset(size.width * 0.1, size.height * 0.6),
+      Offset(size.width * 0.3, size.height * 0.8),
+      Offset(size.width * 0.5, size.height * 0.45),
+      Offset(size.width * 0.7, size.height * 0.65),
+      Offset(size.width * 0.9, size.height * 0.1),
+    ];
+
+    path.moveTo(points.first.dx, points.first.dy);
+
+    for (var i = 1; i < points.length; i++) {
+      path.lineTo(points[i].dx, points[i].dy);
+    }
+
+    // Draw shimmering line
+    canvas.drawPath(path, paint);
+
+    // Draw shimmering points
+    for (var point in points) {
+      canvas.drawCircle(point, 7, pointPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }

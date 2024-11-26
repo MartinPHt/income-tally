@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:income_tally/services/data_controller.dart';
 
 class StateAwareWidget extends StatelessWidget {
+  final ValueNotifier<DataState> notifier;
   final Widget successWidget;
   final Widget onLoadingWidget;
   final Widget onErrorWidget;
-  final ValueNotifier<DataState> notifier;
 
-  const StateAwareWidget({super.key, required this.successWidget, required this.onLoadingWidget, required this.onErrorWidget, required this.notifier});
+  const StateAwareWidget({super.key, required this.notifier, required this.successWidget, required this.onLoadingWidget, required this.onErrorWidget});
 
   @override
   Widget build(BuildContext context) {

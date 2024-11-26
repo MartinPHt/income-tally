@@ -68,6 +68,7 @@ class DataController {
             .toList();
         filteredExpenses.sort((a, b) => a.date.month.compareTo(b.date.month));
         updateAverageExpenses(filteredExpenses);
+        monthlyExpensesState.value = DataState.loaded;
       }
 
       if (updateExpPerType) {

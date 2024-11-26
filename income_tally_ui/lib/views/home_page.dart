@@ -2,10 +2,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:income_tally/services/data_controller.dart';
 import 'package:income_tally/services/helpers.dart';
+import 'package:income_tally/widgets/error_state_widget.dart';
 import 'package:income_tally/widgets/rounded_container.dart';
 import 'package:income_tally/widgets/shimmer_loading_list.dart';
 import 'package:income_tally/widgets/sliding_menu_item.dart';
 import 'package:income_tally/widgets/state_aware_widget.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../widgets/line_chart.dart';
@@ -90,7 +92,8 @@ class HomePageState extends State<HomePage> {
     Widget homePageBody = Stack(children: [
       RefreshIndicator(
         onRefresh: () async {
-          await DataController.instance.performExpensesFetch(updateMonthlyExpenses: true);
+          await DataController.instance
+              .performExpensesFetch(updateMonthlyExpenses: true);
         },
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -123,70 +126,14 @@ class HomePageState extends State<HomePage> {
                                   AppColors.backgroundPurple,
                                   AppColors.backgroundBlue,
                                 ]),
-                                child: Container(
-                                  padding:
-                                      const EdgeInsets.only(left: 10, right: 10),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Positioned(
-                                          top: 20,
-                                          left: 10,
-                                          child: Image.asset(
-                                            "lib/icons/moneyIcon.png",
-                                            width: 30,
-                                            height: 30,
-                                          )),
-                                      Container(
-                                        margin: const EdgeInsets.only(left: 10),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  "Available money",
-                                                  style: TextStyle(
-                                                    color: Colors.grey[600],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  "2500 BGN",
-                                                  style: TextStyle(
-                                                      color: Colors.grey[900],
-                                                      fontSize: 28,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              //Second rounded container
-                              RoundedContainer(
-                                width: MediaQuery.of(context).size.width / 2,
-                                height: double.infinity,
-                                margin: const EdgeInsets.only(
-                                    left: 15, top: 15, right: 25, bottom: 15),
-                                constraints: const BoxConstraints(
-                                    minWidth: 250, maxWidth: 365),
-                                child: TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, "/add_edit_expense");
-                                    },
-                                    style: TextButton.styleFrom(
-                                        overlayColor: Colors.transparent),
+                                child: StateAwareWidget(
+                                  notifier:
+                                      DataController.instance.allExpensesState,
+                                  onLoadingWidget: _shimmerTopContainers(),
+                                  onErrorWidget: _errorStateTopContainers(title: '---- BGN', text: 'Available money'),
+                                  successWidget: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -194,12 +141,13 @@ class HomePageState extends State<HomePage> {
                                             top: 20,
                                             left: 10,
                                             child: Image.asset(
-                                              "lib/icons/add.png",
+                                              "lib/icons/moneyIcon.png",
                                               width: 30,
                                               height: 30,
                                             )),
                                         Container(
-                                          margin: const EdgeInsets.only(left: 10),
+                                          margin:
+                                              const EdgeInsets.only(left: 10),
                                           child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -207,7 +155,7 @@ class HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Text(
-                                                    "Let's add new expense",
+                                                    "Available money",
                                                     style: TextStyle(
                                                       color: Colors.grey[600],
                                                     ),
@@ -217,7 +165,7 @@ class HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Text(
-                                                    "Add new",
+                                                    "2500 BGN",
                                                     style: TextStyle(
                                                         color: Colors.grey[900],
                                                         fontSize: 28,
@@ -230,7 +178,76 @@ class HomePageState extends State<HomePage> {
                                           ),
                                         )
                                       ],
-                                    )),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              //Second rounded container
+                              RoundedContainer(
+                                width: MediaQuery.of(context).size.width / 2,
+                                height: double.infinity,
+                                margin: const EdgeInsets.only(
+                                    left: 15, top: 15, right: 25, bottom: 15),
+                                constraints: const BoxConstraints(
+                                    minWidth: 250, maxWidth: 365),
+                                child: StateAwareWidget(
+                                  notifier:
+                                  DataController.instance.allExpensesState,
+                                  onLoadingWidget: _shimmerTopContainers(),
+                                  onErrorWidget: _errorStateTopContainers(title: 'Error', text: 'There is a problem'),
+                                  successWidget: TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, "/add_edit_expense");
+                                      },
+                                      style: TextButton.styleFrom(
+                                          overlayColor: Colors.transparent),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Positioned(
+                                              top: 20,
+                                              left: 10,
+                                              child: Image.asset(
+                                                "lib/icons/add.png",
+                                                width: 30,
+                                                height: 30,
+                                              )),
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(left: 10),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "Let's add new expense",
+                                                      style: TextStyle(
+                                                        color: Colors.grey[600],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "Add new",
+                                                      style: TextStyle(
+                                                          color: Colors.grey[900],
+                                                          fontSize: 28,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      )),
+                                ),
                               ),
                             ]),
                       ),
@@ -249,23 +266,36 @@ class HomePageState extends State<HomePage> {
                                   constraints:
                                       const BoxConstraints(maxWidth: 730),
                                   alignment: Alignment.topLeft,
-                                  child: ValueListenableBuilder(
-                                    valueListenable:
-                                        DataController.instance.monthlyExpenses,
-                                    builder: (context, value, child) {
-                                      List<FlSpot> dataSet = [];
-                                      if (value.isNotEmpty) {
-                                        dataSet = value.entries.map((entry) {
-                                          return FlSpot(entry.key, entry.value);
-                                        }).toList();
-                                      }
-                                      return CustomLineChart(
-                                        margin: chartMargin,
-                                        bottomTitlesGenerator:
-                                            lineChartBottomTitles,
-                                        data: dataSet,
-                                      );
-                                    },
+                                  child: StateAwareWidget(
+                                    notifier: DataController
+                                        .instance.monthlyExpensesState,
+                                    successWidget: ValueListenableBuilder(
+                                      valueListenable: DataController
+                                          .instance.monthlyExpenses,
+                                      builder: (context, value, child) {
+                                        List<FlSpot> dataSet = [];
+                                        if (value.isNotEmpty) {
+                                          dataSet = value.entries.map((entry) {
+                                            return FlSpot(
+                                                entry.key, entry.value);
+                                          }).toList();
+                                        }
+                                        return CustomLineChart(
+                                          margin: chartMargin,
+                                          bottomTitlesGenerator:
+                                              lineChartBottomTitles,
+                                          data: dataSet,
+                                        );
+                                      },
+                                    ),
+                                    onLoadingWidget: const Center(
+                                      child: Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: LineChartShimmer()),
+                                    ),
+                                    onErrorWidget: const Center(
+                                        child: IntrinsicHeight(
+                                            child: ErrorStateWidget())),
                                   )),
                             ),
                           ],
@@ -287,47 +317,54 @@ class HomePageState extends State<HomePage> {
                           left: 30, top: 25, right: 25, bottom: 40),
                       padding:
                           const EdgeInsets.only(left: 10, top: 10, right: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(
-                                left: 20, top: 10, bottom: 15),
-                            child: const Text(
-                              'Expenses',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: ValueListenableBuilder(
-                                valueListenable:
-                                    DataController.instance.allExpenses,
-                                builder: (context, value, child) {
-                                  return Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 20, right: 20),
-                                    child: Column(
-                                      children: List.generate(
-                                          DataController.instance.allExpenses
-                                              .value.length, (index) {
-                                        return Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: SlidingUpPanelItem(
-                                              model: DataController.instance
-                                                  .allExpenses.value[index]),
-                                        );
-                                      }),
-                                    ),
-                                  );
-                                },
+                      child: StateAwareWidget(
+                        notifier: DataController.instance.allExpensesState,
+                        onErrorWidget: const ErrorStateWidget(),
+                        onLoadingWidget: const ShimmerLoadingList(
+                          length: 10,
+                        ),
+                        successWidget: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(
+                                  left: 20, top: 10, bottom: 15),
+                              child: const Text(
+                                'Expenses',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
-                          ),
-                        ],
+                            Expanded(
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: ValueListenableBuilder(
+                                  valueListenable:
+                                      DataController.instance.allExpenses,
+                                  builder: (context, value, child) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 20, right: 20),
+                                      child: Column(
+                                        children: List.generate(
+                                            DataController.instance.allExpenses
+                                                .value.length, (index) {
+                                          return Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: SlidingUpPanelItem(
+                                                model: DataController.instance
+                                                    .allExpenses.value[index]),
+                                          );
+                                        }),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -399,35 +436,16 @@ class HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 StateAwareWidget(
-                                  notifier: DataController.instance.allExpensesState,
-                                  onErrorWidget: Column(children: [
-                                    const SizedBox(height: 20,),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Container(constraints: const BoxConstraints(maxHeight: 120, maxWidth: 120), child: Image.asset('lib/icons/unplugedIcon.png'),)
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20,),
-                                    const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text('Something went wrong', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text('An error ocurred while loading yor expenses', style: TextStyle(fontSize: 18))
-                                      ],
-                                    ),
-                                  ],),
-                                  onLoadingWidget: const ShimmerLoadingList(length: 10,),
+                                  notifier:
+                                      DataController.instance.allExpensesState,
+                                  onErrorWidget: const ErrorStateWidget(),
+                                  onLoadingWidget: const ShimmerLoadingList(
+                                    length: 10,
+                                  ),
                                   successWidget: Column(
                                     children: List.generate(
-                                        DataController.instance.allExpenses.value
-                                            .length, (index) {
+                                        DataController.instance.allExpenses
+                                            .value.length, (index) {
                                       return Container(
                                         margin: const EdgeInsets.symmetric(
                                             vertical: 10),
@@ -451,6 +469,112 @@ class HomePageState extends State<HomePage> {
     }
 
     return homePageBody;
+  }
+
+  //widget to be shown when loading total and add new expense borders
+  Widget _shimmerTopContainers() {
+    return Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                  top: 20,
+                  left: 10,
+                  child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10)))),
+              Container(
+                margin: const EdgeInsets.only(left: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                            width: 100,
+                            height: 20,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)))
+                      ],
+                    ),
+                    const SizedBox(height: 10,),
+                    Row(
+                      children: [
+                        Container(
+                            width: 150,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)))
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+
+  //widget to be shown when loading total and add new expense borders
+  Widget _errorStateTopContainers({required String title, required String text}) {
+    return Container(
+      padding: const EdgeInsets.only(
+          left: 10, right: 10),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+              top: 20,
+              left: 10,
+              child: Image.asset(
+                "lib/icons/moneyIcon.png",
+                width: 30,
+                height: 30,
+              )),
+          Container(
+            margin:
+            const EdgeInsets.only(left: 10),
+            child: Column(
+              mainAxisAlignment:
+              MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      text,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                          color: Colors.grey[900],
+                          fontSize: 28,
+                          fontWeight:
+                          FontWeight.bold),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget lineChartBottomTitles(double value, TitleMeta meta) {
