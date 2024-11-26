@@ -23,13 +23,6 @@ class PostExpenseRequestBody extends HttpPostRequestBody {
       required this.isRecurring,
       required this.date});
 
-  PostExpenseRequestBody.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        total = json['total'],
-        category = json['category'],
-        isRecurring = json['isRecurring'],
-        date = json['date'];
-
   Map<String, dynamic> toJson() {
     return {
       'title': title,
@@ -56,14 +49,6 @@ class PutExpenseRequestBody extends HttpPutRequestBody {
       required this.isRecurring,
       required this.date});
 
-  PutExpenseRequestBody.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        total = json['total'],
-        category = json['category'],
-        isRecurring = json['isRecurring'],
-        date = json['date'],
-        super(id: json['id']);
-
   Map<String, dynamic> toJson() {
     return {
       'id': super.id,
@@ -71,7 +56,7 @@ class PutExpenseRequestBody extends HttpPutRequestBody {
       'total': total,
       'category': category,
       'isRecurring': isRecurring,
-      'date': date,
+      'date': date.toIso8601String(),
     };
   }
 }

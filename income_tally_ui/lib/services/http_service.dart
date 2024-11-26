@@ -20,11 +20,11 @@ abstract class EntityHttpService {
       : _httpClient = Client();
 
   // Post request
-  Future<void> postAsync<T>(
-      {required T requestBody, int? timeoutSec}) async {
+  Future<void> postAsync(
+      {required PostExpenseRequestBody requestBody, int? timeoutSec}) async {
     Uint8List? requestContent;
     final jsonString =
-        JsonSerialize.serialize<T>(requestBody);
+        JsonSerialize.serialize(requestBody);
     requestContent = utf8.encode(jsonString);
 
     final Response response = await _httpClient
@@ -80,10 +80,10 @@ abstract class EntityHttpService {
   // Put request
   Future<T> putAsync<T>(
       {required int id,
-      required PutExpenseRequestBody request,
+      required PutExpenseRequestBody requestBody,
       int? timeoutSec}) async {
     Uint8List? requestContent;
-    final jsonString = JsonSerialize.serialize(request);
+    final jsonString = JsonSerialize.serialize(requestBody);
     requestContent = utf8.encode(jsonString);
 
     final Response response = await _httpClient
@@ -99,7 +99,7 @@ abstract class EntityHttpService {
   }
 
   // Delete request
-  Future<T> deleteAsync<T>({required String id, int? timeoutSec}) async {
+  Future<void> deleteAsync({required int id, int? timeoutSec}) async {
     final Response response = await _httpClient
         .delete(
           Uri.parse('$baseUrl/$controllerName/$id'),
@@ -107,7 +107,6 @@ abstract class EntityHttpService {
         .timeout(Duration(seconds: timeoutSec ?? defaultTimeoutSec));
 
     ensureSuccessfulStatusCode(response);
-      return JsonSerialize.deserialize<T>(response.body);
   }
 
   void ensureSuccessfulStatusCode(Response response) {

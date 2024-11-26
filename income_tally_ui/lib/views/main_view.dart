@@ -17,6 +17,7 @@ class MainView extends StatefulWidget {
 
 class MainViewState extends State<MainView> {
   int _selectedIndex = 0;
+  ScrollController controller = ScrollController();
 
   // List of pages for each tab
   final Map<int, Widget> _pages = {
@@ -70,7 +71,7 @@ class MainViewState extends State<MainView> {
     );
   }
 
-  void handleFetchExpenses(int screenIndex) {
+  Future<void> handleFetchExpenses(int screenIndex) async {
     bool fetchMonthlyExpenses = false;
     bool fetchExpPerType = false;
 
@@ -83,7 +84,9 @@ class MainViewState extends State<MainView> {
       fetchExpPerType = true;
     }
 
-    DataController.instance.performExpensesFetch(fetchMonthlyExpenses: fetchMonthlyExpenses, fetchExpPerType: fetchExpPerType);
+    await DataController.instance.performExpensesFetch(
+        updateMonthlyExpenses: fetchMonthlyExpenses,
+        updateExpPerType: fetchExpPerType);
   }
 
   @override

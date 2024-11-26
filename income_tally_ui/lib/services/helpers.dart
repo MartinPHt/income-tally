@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:income_tally/Models/expense_model.dart';
+import 'package:income_tally/services/data_controller.dart';
+import 'package:income_tally/widgets/rounded_container.dart';
 
 class CustomScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -257,9 +259,12 @@ abstract class DialogHelper {
                       width: 60,
                       height: 60,
                       child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/add_edit_expense",
+                        onPressed: () async {
+                          await Navigator.pushNamed(context, "/add_edit_expense",
                               arguments: expense);
+                          if (context.mounted){
+                            Navigator.pop(context);
+                          }
                         },
                         style: TextButton.styleFrom(
                             backgroundColor: const Color(0xff9d6fed),
@@ -283,9 +288,22 @@ abstract class DialogHelper {
                           DialogHelper.showConfirmationDialog(context,
                               title:
                                   "Are you sure you want to delete '${expense.title}' expense",
-                              onConfirmed: () {
-                            //close the showExpenseEditActions dialog
-                            Navigator.pop(context);
+                              onConfirmed: () async {
+                            var result = await DataController.instance
+                                .performDeleteExpense(expense.id);
+                            if (result) {
+                              await DataController.instance
+                                  .performExpensesFetch(
+                                      updateMonthlyExpenses: true);
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            } else {
+                              if (context.mounted) {
+                                showDialogWithAutoClose(context,
+                                    isSuccessful: false, func: () {});
+                              }
+                            }
                           });
                         },
                         style: TextButton.styleFrom(
@@ -347,6 +365,61 @@ abstract class DialogHelper {
     } else if (confirmed == false && onCanceled != null) {
       onCanceled();
     }
+  }
+
+  // Function to show a dialog and close it after 2 seconds
+  static Future<void> showDialogWithAutoClose(BuildContext context,
+      {required bool isSuccessful, required Function() func}) async {
+    bool isClosed = false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (context.mounted && !isClosed) {
+            Navigator.of(context).pop(); // This will close the dialog
+          }
+        });
+
+        return Dialog(
+          child: RoundedContainer(
+            height: 200,
+            width: 120,
+            child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  isClosed = true;
+                },
+                style: TextButton.styleFrom(overlayColor: Colors.transparent),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      isSuccessful
+                          ? "lib/icons/successIcon.png"
+                          : "lib/icons/errorIcon.png",
+                      width: 80,
+                      height: 80,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      isSuccessful ? "Successful" : "Error. Try again later.",
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    )
+                  ],
+                )),
+          ),
+        );
+      },
+    ).whenComplete(() {
+      bool isClosed = false;
+    });
+
+    func();
   }
 }
 

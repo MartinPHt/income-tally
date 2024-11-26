@@ -7,18 +7,18 @@ import 'package:income_tally/services/http_service.dart';
 class DataController {
   //expenses per type notifiers
   final ValueNotifier<DataState> expPerTypeState =
-      ValueNotifier(DataState.loading);
+  ValueNotifier(DataState.loading);
   final ValueNotifier<Map<ExpenseCategory, double>> expPerType =
-      ValueNotifier({});
+  ValueNotifier({});
 
   //average expenses per month notifiers
   final ValueNotifier<DataState> monthlyExpensesState =
-      ValueNotifier(DataState.loading);
+  ValueNotifier(DataState.loading);
   final ValueNotifier<Map<double, double>> monthlyExpenses = ValueNotifier({});
 
   //all expenses notifiers
   final ValueNotifier<DataState> allExpensesState =
-      ValueNotifier(DataState.loading);
+  ValueNotifier(DataState.loading);
   final ValueNotifier<List<ExpenseModel>> allExpenses = ValueNotifier([]);
 
   final ValueNotifier<String?> serverError = ValueNotifier(null);
@@ -33,20 +33,20 @@ class DataController {
 
   //Data fetching methods
   Future<void> performExpensesFetch(
-      {bool fetchMonthlyExpenses = false, bool fetchExpPerType = false}) async {
+      {bool updateMonthlyExpenses = false, bool updateExpPerType = false}) async {
     try {
       //indicate that a response from the server is awaited
       allExpensesState.value = DataState.loading;
-      if (fetchMonthlyExpenses) {
+      if (updateMonthlyExpenses) {
         monthlyExpensesState.value = DataState.loading;
       }
-      if (fetchExpPerType) {
+      if (updateExpPerType) {
         expPerTypeState.value = DataState.loading;
       }
 
       //handle the response
       List<dynamic> responseList =
-          await ExpenseHttpService.instance.getAllAsync<List<dynamic>>();
+      await ExpenseHttpService.instance.getAllAsync<List<dynamic>>();
 
       //explicitly cast the response
       List<ExpenseResponse> expenseList = responseList
@@ -62,22 +62,22 @@ class DataController {
       var thisYear = dateTime.year;
       List<ExpenseModel> filteredExpenses;
 
-      if (fetchMonthlyExpenses) {
-        filteredExpenses = allExpenses.value
-            .where((expense) =>
-                expense.date.year == thisYear &&
-                expense.date.month == thisMonth)
-            .toList();
-        updateExpensesPerType(filteredExpenses);
-        expPerTypeState.value = DataState.loaded;
-      }
-
-      if (fetchExpPerType) {
+      if (updateMonthlyExpenses) {
         filteredExpenses = allExpenses.value
             .where((expense) => expense.date.year == thisYear)
             .toList();
         filteredExpenses.sort((a, b) => a.date.month.compareTo(b.date.month));
         updateAverageExpenses(filteredExpenses);
+      }
+
+      if (updateExpPerType) {
+        filteredExpenses = allExpenses.value
+            .where((expense) =>
+        expense.date.year == thisYear &&
+            expense.date.month == thisMonth)
+            .toList();
+        updateExpensesPerType(filteredExpenses);
+        expPerTypeState.value = DataState.loaded;
       }
     } catch (e) {
       allExpensesState.value = DataState.failure;
@@ -86,26 +86,54 @@ class DataController {
     }
   }
 
+  // Perform Add Expense
   Future<void> performAddExpense(ExpenseModel model) async {
-    await ExpenseHttpService.instance.postAsync<PostExpenseRequestBody>(
-        requestBody: PostExpenseRequestBody(
-            title: model.title,
-            total: model.total,
-            category: model.category.name,
-            isRecurring: model.isRecurring,
-            date: model.date));
+      await ExpenseHttpService.instance.postAsync(
+          requestBody: PostExpenseRequestBody(
+              title: model.title,
+              total: model.total,
+              category: model.category.name,
+              isRecurring: model.isRecurring,
+              date: model.date));
+  }
+
+  Future<void> performEditExpense(ExpenseModel model) async {
+      await ExpenseHttpService.instance.putAsync(
+          id: model.id,
+          requestBody: PutExpenseRequestBody(
+              id: model.id,
+              title: model.title,
+              total: model.total,
+              category: model.category.name,
+              isRecurring: model.isRecurring,
+              date: model.date));
+  }
+
+  // Perform Delete Expense
+  Future<bool> performDeleteExpense(int id) async {
+    bool result;
+    try {
+      await ExpenseHttpService.instance.deleteAsync(id: id);
+      result = true;
+    }
+    catch (ex) {
+      return false;
+    }
+
+    return result;
   }
 
   //Helper methods
   List<ExpenseModel> convertResponseToExpenses(
       List<ExpenseResponse> responseList) {
     return responseList
-        .map((responseObj) => ExpenseModel(
+        .map((responseObj) =>
+        ExpenseModel(
             id: responseObj.id,
             title: responseObj.title,
             total: responseObj.total,
             category: ExpenseCategory.values.firstWhere(
-                (category) => category.name == responseObj.category),
+                    (category) => category.name == responseObj.category),
             isRecurring: responseObj.isRecurring,
             date: responseObj.date))
         .toList();

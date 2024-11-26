@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:income_tally/Models/expense_model.dart';
 import 'package:income_tally/services/data_controller.dart';
-import 'package:income_tally/widgets/rounded_container.dart';
+import 'package:income_tally/services/helpers.dart';
 
 class AddExpenseView extends StatefulWidget {
   const AddExpenseView({super.key});
@@ -356,12 +356,12 @@ class AddExpenseViewState extends State<AddExpenseView> {
                                 ? (widgetsMaxWidth - 40) * 0.50
                                 : (widgetsMaxWidth - 40) * 0.65,
                             child: FilledButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     if (passedModel == null) {
-                                      doAddNewExpense(context);
+                                      await doAddNewExpense(context);
                                     } else {
-                                      doEditNewExpense(context);
+                                      await doEditNewExpense(context);
                                     }
                                   }
                                 },
@@ -455,14 +455,17 @@ class AddExpenseViewState extends State<AddExpenseView> {
           date: DateTime(year, month));
 
       await DataController.instance.performAddExpense(expense);
-      await DataController.instance.performExpensesFetch(fetchMonthlyExpenses: true);
-      showDialogWithAutoClose(context, isSuccessful: true, func: () {
-        // go back to previous page
-        Navigator.pop(context);
-      });
+      await DataController.instance.performExpensesFetch(updateMonthlyExpenses: true);
+      if (context.mounted) {
+        DialogHelper.showDialogWithAutoClose(context, isSuccessful: true, func: () {
+          // go back to previous page
+          Navigator.pop(context);
+        });
+      }
     } catch (ex) {
-      String temp = ex.toString();
-      showDialogWithAutoClose(context, isSuccessful: false, func: () {});
+      if (context.mounted) {
+        DialogHelper.showDialogWithAutoClose(context, isSuccessful: false, func: () {});
+      }
     }
   }
 
@@ -481,69 +484,18 @@ class AddExpenseViewState extends State<AddExpenseView> {
           isRecurring: isRecurring,
           date: DateTime(year, month));
 
-      await DataController.instance.performAddExpense(expense);
-      await DataController.instance.performExpensesFetch(fetchMonthlyExpenses: true);
-      showDialogWithAutoClose(context, isSuccessful: true, func: () {
-        // go back to previous page
-        Navigator.pop(context);
-      });
-    } catch (ex) {
-      showDialogWithAutoClose(context, isSuccessful: false, func: () {});
-    }
-  }
-
-  // Function to show a dialog and close it after 2 seconds
-  Future showDialogWithAutoClose(BuildContext context,
-      {required bool isSuccessful, required Function() func}) async {
-    bool isClosed = false;
-
-    await showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        Future.delayed(const Duration(seconds: 2), () {
-          if (mounted && !isClosed) {
-            Navigator.of(context).pop(); // This will close the dialog
-          }
+      await DataController.instance.performEditExpense(expense);
+      await DataController.instance.performExpensesFetch(updateMonthlyExpenses: true);
+      if (context.mounted) {
+        DialogHelper.showDialogWithAutoClose(context, isSuccessful: true, func: () {
+          // go back to previous page
+          Navigator.pop(context);
         });
-
-        return Dialog(
-          child: RoundedContainer(
-            height: 200,
-            width: 120,
-            child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  isClosed = true;
-                },
-                style: TextButton.styleFrom(overlayColor: Colors.transparent),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      isSuccessful
-                          ? "lib/icons/successIcon.png"
-                          : "lib/icons/errorIcon.png",
-                      width: 80,
-                      height: 80,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      isSuccessful ? "Successful" : "Error",
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                )),
-          ),
-        );
-      },
-    ).whenComplete(() {
-      bool isClosed = false;
-    });
-
-    func();
+      }
+    } catch (ex) {
+      if (context.mounted) {
+        DialogHelper.showDialogWithAutoClose(context, isSuccessful: false, func: () {});
+      }
+    }
   }
 }
