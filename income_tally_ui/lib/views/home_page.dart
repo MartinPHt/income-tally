@@ -129,7 +129,9 @@ class HomePageState extends State<HomePage> {
                                   notifier:
                                       DataController.instance.allExpensesState,
                                   onLoadingWidget: _shimmerTopContainers(),
-                                  onErrorWidget: _errorStateTopContainers(title: '---- BGN', text: 'Expenses for the month'),
+                                  onErrorWidget: _errorStateTopContainers(
+                                      title: '---- BGN',
+                                      text: 'Expenses for the month'),
                                   successWidget: Container(
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
@@ -164,19 +166,23 @@ class HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   ValueListenableBuilder(
-                                                    valueListenable: DataController.instance.expensesTotalNotifier,
-                                                    builder: (context, value, child) {
-                                                      return Text(
-                                                        "$value BGN",
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .grey[900],
-                                                            fontSize: 28,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      );
-                                                    }
-                                                  )
+                                                      valueListenable:
+                                                          DataController
+                                                              .instance
+                                                              .expensesTotalNotifier,
+                                                      builder: (context, value,
+                                                          child) {
+                                                        return Text(
+                                                          "$value BGN",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .grey[900],
+                                                              fontSize: 28,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        );
+                                                      })
                                                 ],
                                               ),
                                             ],
@@ -197,9 +203,11 @@ class HomePageState extends State<HomePage> {
                                     minWidth: 250, maxWidth: 365),
                                 child: StateAwareWidget(
                                   notifier:
-                                  DataController.instance.allExpensesState,
+                                      DataController.instance.allExpensesState,
                                   onLoadingWidget: _shimmerTopContainers(),
-                                  onErrorWidget: _errorStateTopContainers(title: 'Error', text: 'There is a problem'),
+                                  onErrorWidget: _errorStateTopContainers(
+                                      title: 'Error',
+                                      text: 'There is a problem'),
                                   successWidget: TextButton(
                                       onPressed: () {
                                         Navigator.pushNamed(
@@ -240,7 +248,8 @@ class HomePageState extends State<HomePage> {
                                                     Text(
                                                       "Add new",
                                                       style: TextStyle(
-                                                          color: Colors.grey[900],
+                                                          color:
+                                                              Colors.grey[900],
                                                           fontSize: 28,
                                                           fontWeight:
                                                               FontWeight.bold),
@@ -343,10 +352,12 @@ class HomePageState extends State<HomePage> {
                             ),
                             Expanded(
                               child: RefreshIndicator(
-                                triggerMode: RefreshIndicatorTriggerMode.anywhere,
+                                triggerMode:
+                                    RefreshIndicatorTriggerMode.anywhere,
                                 onRefresh: () async {
                                   await DataController.instance
-                                      .performExpensesFetch(updateMonthlyExpenses: true);
+                                      .performExpensesFetch(
+                                          updateMonthlyExpenses: true);
                                 },
                                 child: SingleChildScrollView(
                                   physics: const BouncingScrollPhysics(),
@@ -359,14 +370,20 @@ class HomePageState extends State<HomePage> {
                                             left: 20, right: 20),
                                         child: Column(
                                           children: List.generate(
-                                              DataController.instance.allExpenses
-                                                  .value.length, (index) {
+                                              DataController
+                                                  .instance
+                                                  .allExpenses
+                                                  .value
+                                                  .length, (index) {
                                             return Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  vertical: 10),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10),
                                               child: SlidingUpPanelItem(
-                                                  model: DataController.instance
-                                                      .allExpenses.value[index]),
+                                                  model: DataController
+                                                      .instance
+                                                      .allExpenses
+                                                      .value[index]),
                                             );
                                           }),
                                         ),
@@ -428,9 +445,10 @@ class HomePageState extends State<HomePage> {
                 ),
                 Expanded(
                   child: StateAwareWidget(
-                    notifier:
-                    DataController.instance.allExpensesState,
-                    onErrorWidget: const ErrorStateWidget(),
+                    notifier: DataController.instance.allExpensesState,
+                    onErrorWidget: Container(
+                        margin: const EdgeInsets.only(top: 40),
+                        child: const ErrorStateWidget()),
                     onLoadingWidget: const ShimmerLoadingList(
                       length: 10,
                     ),
@@ -456,19 +474,18 @@ class HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                   Column(
-                                      children: List.generate(
-                                          DataController.instance.allExpenses
-                                              .value.length, (index) {
-                                        return Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: SlidingUpPanelItem(
-                                              model: DataController.instance
-                                                  .allExpenses.value[index]),
-                                        );
-                                      }),
-                                    ),
-
+                                    children: List.generate(
+                                        DataController.instance.allExpenses
+                                            .value.length, (index) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        child: SlidingUpPanelItem(
+                                            model: DataController.instance
+                                                .allExpenses.value[index]),
+                                      );
+                                    }),
+                                  ),
                                 ]),
                           );
                         },
@@ -519,7 +536,9 @@ class HomePageState extends State<HomePage> {
                                 borderRadius: BorderRadius.circular(15)))
                       ],
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       children: [
                         Container(
@@ -539,10 +558,10 @@ class HomePageState extends State<HomePage> {
   }
 
   //widget to be shown when loading total and add new expense borders
-  Widget _errorStateTopContainers({required String title, required String text}) {
+  Widget _errorStateTopContainers(
+      {required String title, required String text}) {
     return Container(
-      padding: const EdgeInsets.only(
-          left: 10, right: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -555,11 +574,9 @@ class HomePageState extends State<HomePage> {
                 height: 30,
               )),
           Container(
-            margin:
-            const EdgeInsets.only(left: 10),
+            margin: const EdgeInsets.only(left: 10),
             child: Column(
-              mainAxisAlignment:
-              MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
                   children: [
@@ -578,8 +595,7 @@ class HomePageState extends State<HomePage> {
                       style: TextStyle(
                           color: Colors.grey[900],
                           fontSize: 28,
-                          fontWeight:
-                          FontWeight.bold),
+                          fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
