@@ -35,7 +35,6 @@ class PostExpenseRequestBody extends HttpPostRequestBody {
 }
 
 class PutExpenseRequestBody extends HttpPutRequestBody {
-
   final String title;
   final double total;
   final String category;
